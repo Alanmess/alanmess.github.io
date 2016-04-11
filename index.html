@@ -37,7 +37,7 @@
 		</a>
 
 		<hgroup>
-		  <h1 class="header-author"><a href="/">John Doe</a></h1>
+		  <h1 class="header-author"><a href="/">John</a></h1>
 		</hgroup>
 
 		
@@ -114,7 +114,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						
+						<a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/主题/" style="font-size: 10px;">主题</a>
 					</div>
 				</section>
 				
@@ -156,7 +156,7 @@
       <nav id="mobile-nav">
   	<div class="overlay">
   		<div class="slider-trigger"></div>
-  		<h1 class="header-author js-mobile-header hide">John Doe</h1>
+  		<h1 class="header-author js-mobile-header hide">John</h1>
   	</div>
 	<div class="intrude-less">
 		<header id="header" class="inner">
@@ -166,7 +166,7 @@
 			
 			</div>
 			<hgroup>
-			  <h1 class="header-author">John Doe</h1>
+			  <h1 class="header-author">John</h1>
 			</hgroup>
 			
 			<nav class="header-menu">
@@ -198,11 +198,11 @@
 
       <div class="body-wrap">
   
-    <article id="post-iOS-Core-Animation——动画" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-iOS-Core-Animation——性能优化" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/04/11/iOS-Core-Animation——动画/" class="article-date">
-  	<time datetime="2016-04-11T04:57:00.000Z" itemprop="datePublished">2016-04-11</time>
+      <a href="/2016/04/11/iOS-Core-Animation——性能优化/" class="article-date">
+  	<time datetime="2016-04-11T06:26:10.000Z" itemprop="datePublished">2016-04-11</time>
 </a>
     </div>
   
@@ -211,194 +211,98 @@
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/11/iOS-Core-Animation——性能优化/">iOS Core Animation——性能优化</a>
+    </h1>
+  
+
+      </header>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>title: iOS Core Animation——动画<br>date: 2016-04-11 12:55:50</p>
-<p>#Core Animation — 动画</p>
-<p>###一、隐式动画</p>
-<p>#####1 事务</p>
-<ul>
-<li>Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过度到新值。</li>
-<li>事务通过CATransaction类来做管理，这个类的设计有些奇怪，不像你从它的命名预期那样去管理一个简单的事务，而是管理了一叠你不能访问的事务。<code>CATransaction</code>没有属性或者实例方法，也不能用<code>alloc</code>和<code>init</code>方法创建它。但是可以用<code>begin</code>和<code>+commit</code>分别来入栈或者出栈。</li>
-</ul>
-<p>任何可以做动画的图层属性都会被添加到栈顶的事务，你可以通过<code>+setAnimationDuration</code>方法设置当前事务的动画时间，或者通过<code>+animationDuration</code>方法来获取值(默认0.25秒)。</p>
-<p>Core Animation在每个run loop周期中自动开始一次新的事务(run loop是iOS负责收集用户输入，处理定时器或者网络事件并且重新绘制屏幕的东西)，即使你不显示的用<code>[CATransaction begin]</code>开始一次事务，任何在一次run loop循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[CATransaction begin];&#10;[CATransaction setAnimationDuration:1.0];&#10;...&#10;[CATransaction commit];</span><br></pre></td></tr></table></figure>
-<p>UIView的动画方法<code>+beginAnimations:context:</code>、<code>+commitAnimations</code>和CATransaction的<code>+begin</code>、<code>+commit</code>方法类似。实际上<code>+beginAnimations:context:</code>、<code>+commitAnimations</code>之间所有视图或者图层属性的改变而做的动画都是由于设置了CATransaction的原因。</p>
-<p><code>+animationWithDuration:animations:</code>只是语法的简化，实质上也是同理。</p>
-<p>#####2 完成块</p>
-<p>CATransaction的<code>+setCompletionBlock</code>允许你在动画结束的时候提供一个完成的动作。</p>
-<p>#####3 图层行为</p>
-<p>Core Animation通常对CALayer的可动画属性做动画，但是UIView把它关联的图层的这个特性关闭了。</p>
-<p><em>隐式动画的实现：</em></p>
-<p>当CALayer的属性被修改时，它会调用<code>-actionForKey:</code>方法传递属性的名称，然后：</p>
-<ul>
-<li>图层首先检测它是否有委托，并且是否实现<code>CALayerDelegate</code>协议指定的<code>actionForLayer:forKey:</code>方法，如果有，直接调用并返回结果。</li>
-<li>如果没有委托，或者委托没有实现<code>-actionForLayer:forKey</code>方法，图层接着检查包含属性名称对应行为映射的actions字典。</li>
-<li>如果actions字典没有包含对应的属性，那么图层接着在它的style字典接着搜索属性名。</li>
-<li>最后，如果在style里面也找不到对应的行为，那么图层将会直接调用定义了每个属性的标准行为的<code>-defaultActionForKey:</code>方法。</li>
-</ul>
-<p>所以一轮完整的搜索结束之后，<code>-actionForKey:</code>要么返回空(这种情况下将不会有动画发生)，要么是CAAction协议对应的对象，最后CALayer拿这个结果去对先前和当前的值做动画。</p>
-<p>于是这就解释了UIKit是如何禁用隐式动画的：<em>每个UIView对它关联的图层都扮演了一个委托，并且提供了<code>-actionForKey:forKey</code>的实现方法。当不在一个动画块的实现中，UIView对所有图层行为返回nil，但是在动画block范围之内，它就返回了一个非空值。</em></p>
-<p>返回nil并不是禁用隐式动画唯一的办法，CATransaction的<code>+setDisableActions</code>可以用来对所有属性打开或者关闭隐式动画。</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr_selector">[CATransaction begin]</span>;</span><br><span class="line"><span class="attr_selector">[CATransaction setDisableActions:YES]</span>;</span><br><span class="line">...</span><br><span class="line"><span class="attr_selector">[CATransaction commit]</span>;</span><br></pre></td></tr></table></figure>
-<p><em>总结</em></p>
-<ul>
-<li>UIView关联的图层禁用了隐式动画，对这种图层做动画的唯一办法就是使用UIView的动画函数(而不是依赖CATransaction)，或者继承UIView，并覆盖<code>-actionForKey:forKey</code>方法，或者直接创建一个显示动画。</li>
-<li>对于单独存在的图层，我们可以通过实现图层的<code>-actionForLayer:forKey:</code>委托方法，或者提供一个actions字典来控制隐式动画。</li>
-</ul>
-<p>行为通常是一个被Core Animation隐式调用的显示动画对象。这里我们使用的是一个实现了CATransaction的实例，叫做推进过渡。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CATranstion</span> *transition = [<span class="built_in">CATransition</span> animation];</span><br><span class="line">transition<span class="variable">.type</span> = k<span class="built_in">CATransitionPush</span>;</span><br><span class="line">transition<span class="variable">.subtype</span> = k<span class="built_in">CATransitionFromLeft</span>;</span><br><span class="line">layer<span class="variable">.actions</span> = @&#123;<span class="string">@"backgroundColor"</span>:transition&#125;;</span><br></pre></td></tr></table></figure>
-<p>#####1.4呈现与模型</p>
-<p>当设置CALayer的属性，实际上是在定义当前事务结束之后图层如何显示的模型。Core Animation扮演了一个控制器的角色，并且负责根据图层行为和事务设置去不断更新视图的这些属性在屏幕上的状态。</p>
-<p>我们讨论的就是一个典型的微型MVC模式。CALayer是一个连接用户界面虚构的类，但是在界面本身的这个场景下，CALayer的行为更像是存储了视图如何显示和动画的数据模型。实际上，在苹果自己的文档中，图层树通常都是值得图层树模型。</p>
-<p>每个图层属性的显示值都被存储在一个叫做<em>呈现图层</em>的独立图层当中，他可以通过<code>-presentationLayer</code>方法来访问。这个呈现图层实际上是模型图层的复制，但是它的属性值代表了在任何指定时刻当前外观效果。换句话说，你可以通过呈现图层的值来获取当前屏幕上真正显示出来的值。</p>
-<p><em>呈现树</em>：通过图层树种所有图层的呈现图层所形成。注意呈现图层仅仅当图层首次被提交(就是首次在屏幕上显示)的时候创建。</p>
-<p>大多数情况下，你不需要直接访问呈现图层，你可以通过和模型图层的交互，来让Core Animation更新显示，两种情况下呈现图层会变得很有用，一个是同步动画，一个是处理用户交互。</p>
-<ul>
-<li>如果你在实现一个基于定时器的动画，而不仅仅是基于事务的动画，这个时候准确地知道在某一时刻图层显示在什么位置就会对正确摆放图层很有用。</li>
-<li>如果你想让你做动画的图层响应用户输入，你可以使用<code>-hitTest</code>方法来判断指定图层是否被触摸，这时候对呈现图层而不是模型图层调用<code>-hitTest</code>会显得更有意义，因为呈现图层代表了用户当前看到的图层位置，而不是当前动画结束之后的位置。</li>
-</ul>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="typename">void</span>)<span class="string">touchsBegan:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event &#123;</span><br><span class="line">  CGPoint point = [[touches anyObject] <span class="string">locationInView:</span>self.view];</span><br><span class="line">  <span class="keyword">if</span> ([layer.presentationLayer <span class="string">hitTest:</span>point]) &#123;</span><br><span class="line">  	...</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>###二、显式动画</p>
-<p>#####1 属性动画</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CABasicAnimation</span> *animation = [<span class="built_in">CABasicAnimation</span> animation];</span><br><span class="line">animation<span class="variable">.keyPath</span> = <span class="string">@"backgroundColor"</span>;</span><br><span class="line">animation<span class="variable">.toValue</span> = (__bridge <span class="keyword">id</span>)color<span class="variable">.CGColor</span>;</span><br><span class="line">animation<span class="variable">.delegate</span> = <span class="keyword">self</span>;</span><br><span class="line">[layer addAnimation:animation forKey:<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//代理方法</span></span><br><span class="line">- (<span class="keyword">void</span>)animationDidStop:(<span class="built_in">CABasicAnimation</span> *)anim finished:(<span class="built_in">BOOL</span>)flag &#123;</span><br><span class="line">  [<span class="built_in">CATransaction</span> begin];</span><br><span class="line">  [<span class="built_in">CATransaction</span> setDisableActions:<span class="literal">YES</span>];</span><br><span class="line">  _layer<span class="variable">.backgroundColor</span> = (__bridge <span class="built_in">CGColorRef</span>)anim<span class="variable">.toValue</span>;</span><br><span class="line">  [<span class="built_in">CATransaction</span> commit];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>动画本身会作为一个参数传入委托的方法，也许你会认为可以在控制器中把动画存储为一个属性，然后再调用比较，但实际上并不起作用，因为委托传入的动画参数是原始值的一个深拷贝，从而不是同一个值。</p>
-<p>当使用<code>-addAnimation:forKey:</code>把动画添加到图层，key参数是<code>-addAnimationForKey</code>方法对应动画的唯一标识符，而当前动画的所有键都可以用animationKeys获取。如果我们对每个动画都关联一个唯一的键，就可以对每个图层循环所有键，然后调用<code>-animationForKey:</code>来比对结果。尽管这不是一个优雅的实现。</p>
-<p>幸运的是，还有一种更加简单的方法。像所有的NSObject子类一样，CAAnimation实现了KVC协议，于是你可以用<code>-setValue:forKey:</code>和<code>-valueForKey</code>方法来存取属性。但CAAnimation有一个不同的性能：它更像一个NSDictionary，可以让你随意设置键值对，即使和你使用的动画类所声明的属性并不匹配。</p>
-<p>这意味着你可以对动画用任意类型打标签，在这里，我们给UIView类型的指针添加的动画，所以可以简单地判断动画到底属于哪个视图，然后在委托方法中用这个信息正确地更新。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#20351;&#29992;KVC&#23545;&#21160;&#30011;&#25171;&#26631;&#31614;&#10;[animation setValue:view forKey:@&#34;view&#34;];&#10;UIView *view = [anim valueForKey:@&#34;view&#34;];&#10;view.layer.transform = [anim.toValue CATransform3DValue];</span><br></pre></td></tr></table></figure>
-<p>#####关键帧动画</p>
-<p><code>CABasicAnimation</code>依然作用于单一的一个属性，但是它不限制于设置一个起始和结束的值，而是可以根据一连串随意的值来做动画。</p>
-<p>关键帧起源于传动动画，意思是指<em>主导的动画在显著改变发生时重绘当前帧</em>(也就是关键帧)，每帧之间剩下的绘制(可以通过关键帧推算出)将由熟练的艺术家来完成。<code>CAKeyframeAnimation</code>也是同样的道理：你提供了显著的帧，然后Core Animation在每帧之间进行插入。</p>
-<p><code>CAKeyframeAnimation</code>有另一种方式去指定动画，就是使用<code>CGPath</code>。path属性可以用一种直观的方式，使用Core Graphics函数定义运动序列来绘制动画。</p>
-<p>#####虚拟属性</p>
-<p>之前提到过属性动画实际上是针对于关键路径而不是一个键，这就意味着可以对子属性甚至是虚拟属性做动画。</p>
-<p>#####2 动画组</p>
-<p><code>CAAnimationGroup</code>可以把动画组合在一起。它是另一个继承于<code>CAAnimation</code>的子类，它添加了一个<code>animations</code>数组的属性，用来组合别的动画。</p>
-<p>#####3 过渡</p>
-<p>改变图层不能动画的属性，或者从层级关系中添加或移除图层，属性动画将不起作用，于是有了过渡的概念。</p>
-<p>过渡不像属性动画那样平滑的在两个值之间做动画，而是影响到整个图层的变化。过渡动画首先展示之前的图层外观，然后通过一个交换过渡到新的外观。</p>
-<p>为了创建一个过渡动画，我们将使用<code>CATransition</code>，同样是另一个<code>CAAnimation</code>的子类，和别的子类不同，<code>CATransition</code>有一个<code>type</code>和<code>subtype</code>来标识变换效果。</p>
-<p><code>type</code>属性是一个NSString类型，可以被设置成如下类型：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CATransitionFade</span></span><br><span class="line">k<span class="built_in">CATransitionMoveIn</span></span><br><span class="line">k<span class="built_in">CATransitionPush</span></span><br><span class="line">k<span class="built_in">CATransitionReveal</span></span><br></pre></td></tr></table></figure>
-<p><code>subtype</code>定义了方向：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CATransitionFromRight</span> </span><br><span class="line">k<span class="built_in">CATransitionFromLeft</span> </span><br><span class="line">k<span class="built_in">CATransitionFromTop</span> </span><br><span class="line">k<span class="built_in">CATransitionFromBottom</span></span><br></pre></td></tr></table></figure>
-<p>过渡动画和属性动画添加到图层上的方式一致，都是通过<code>-addAnimation:forKey:</code>方法。但是过渡动画对指定的图层只能使用一次<code>CATransition</code>，因此，无论你对动画的键设置什么值，过渡动画都会对它的键设置成”transition”，也就是常量<code>kCATransition</code>。</p>
-<p><strong>隐式过渡</strong></p>
-<p>对图层<code>contents</code>图片做的改动都会自动附上淡入淡出的动画。</p>
-<p><strong>对图层树的动画</strong></p>
-<p>要确保<code>CATransition</code>添加到的图层在过渡动画发生时不会再树状结构中被移除，否则<code>CATransition</code>将会和图层一起被移除。一般来说，你只需要将动画添加到被影响图层的<code>superlayer</code>。</p>
-<p><strong>自定义动画</strong></p>
-<p>过渡动画就是对原始的图层外观截图，然后添加一段动画，平滑过渡到图层改变之后那个截图的效果。</p>
-<p><code>CALayer</code>有一个<code>-renderInContext:</code>方法，可以通过把它绘制到Core Graphics的上下文中捕获当前内容的图片，然后在另外的视图中显示出来。如果我们把这个截屏视图置于原始视图之上，就可以遮住真实视图的所有变换，于是重新创建了一个简单的过渡效果。</p>
-<p><strong>在动画过程中取消动画</strong></p>
-<p><code>- (CAAnimation *)animationForKey:(NSString *)key</code>方法可以通过<code>key</code>参数在添加动画之后检索一个动画；</p>
-<p>为了终止一个指定的动画，你可以用如下方法把它从图层中移除掉：</p>
-<p><code>- (void)removeAnimationForKey:(NSString *)key</code></p>
-<p><code>- (void)removeAllAnimations</code></p>
-<p>动画一旦被移除，图层的外观就立刻更新到当前的模型图层的值。一般来说，动画在结束之后被自动移除，除非设置<code>removeOnCompletion</code>为<code>NO</code>，此时需要手动移除，否则会一直存在于内存中，直到图层被销毁。</p>
-<p><code>-animationDidStop:finished:</code>方法中的<code>flag</code>参数表明了动画是自然结束还是被打断；</p>
-<p>###三、图层时间</p>
-<p>#####1 <code>CAMediaTiming</code>协议</p>
-<p><code>CAMediaTiming</code>协议定义了在一段动画内用来控制逝去时间的属性的集合，<code>CALayer</code>和<code>CAAnimation</code>都实现了这个协议，所以时间可以被任意基于一个图层或者一段动画的类控制。</p>
-<p><strong>持续和重复</strong></p>
-<p>“显示动画”中的<code>duration</code>(<code>CAMediaTiming</code>的属性之一)，<code>duration</code>是一个<code>CFTimeInterval</code>的类型(类似于<code>NSTI&#39;mInterval</code>的一种双精度浮点类型)，对将要进行的动画的一次迭代指定了时间。</p>
-<p>一次迭代：<code>CAMediaTiming</code>另外还有个属性叫做<code>repeatCount</code>，代表动画重复的迭代次数。</p>
-<p>创建重复动画的另一种方式是使用<code>repeatDuration</code>属性，它让动画重复一个指定的时间，而不是指定的次数。你甚至设置<code>autoreverses</code>属性在每次间隔交替循环过程中自动回放。</p>
-<p><strong>相对时间</strong></p>
-<p>Core Animation的时间都是相对的，每个动画都有它自己描述的时间，可以独立的加速，延时，偏移。</p>
-<p><code>beginTime</code>指定了动画开始之前的延迟时间。这里的延迟从动画添加到可见图层的那一刻开始测量。</p>
-<p><code>speed</code>是一个时间的倍数，默认1.0，减少它会减慢图层/动画的时间，增加它会加快速度。</p>
-<p><code>timeOffset</code>，让动画快进到某一点。</p>
-<p><strong>fillMode</strong></p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CAFillModeForwards</span> </span><br><span class="line">k<span class="built_in">CAFillModeBackwards</span> </span><br><span class="line">k<span class="built_in">CAFillModeBoth</span> </span><br><span class="line">k<span class="built_in">CAFillModeRemoved</span></span><br></pre></td></tr></table></figure>
-<p>#####3 手动动画</p>
-<p><code>timeOffset</code>一个很有用的功能可以让你手动控制动画进程，通过设置<code>speed</code>为0，可以禁用动画的自动播放，然后用<code>timeOffset</code>显示动画序列。</p>
-<p>###四、缓冲</p>
-<p>#####1 动画速度</p>
-<p>动画实际上就是一段时间内的变化，这就暗示了变化一定是随着某个特定的速率进行。速率由以下公式计算而来：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">velocity = change / time</span><br></pre></td></tr></table></figure>
-<p>这里的变化可以指的是一个物体移动的距离，时间指动画持续的时长，用这样的一个移动可以更加形象的描述(如<code>position</code>和<code>bounds</code>属性的动画)，但实际上它应用于任意可以做动画的属性(如<code>color</code>、<code>opacity</code>)。</p>
-<p><strong>CAMediaTimingFunction</strong></p>
-<p>缓冲方程式：首先需要设置<code>CAAnimation</code>的<code>timingFunction</code>属性，是<code>CAMediaTimingFunction</code>类的一个对象。</p>
-<p>这里有一些方式来创建<code>CAMediaTimingFunction</code>，最简单的方式是调用<code>+timingFunctionWithName:</code>的构造方法。这里传入如下几个常量之一：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CAMediaTimingFunctionLinear</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseIn</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseOut</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseInEaseOut</span></span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionDefault</span></span><br></pre></td></tr></table></figure>
-<p><strong>UIView的动画缓冲</strong></p>
-<p>UIKit的动画同样支持这些缓冲方法的使用，尽管语法和常量有些不同，为了改变UIView动画的缓冲选项，给options参数添加如下常量之一：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseInOut</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseIn</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseOut</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveLinear</span></span><br></pre></td></tr></table></figure>
-<p><strong>缓冲和关键帧动画</strong></p>
-<p><code>CAKeyframeAnimation</code>有一个NSArray类型的<code>timingFunctions</code>属性，我们可以用它来对每次动画的步骤指定不同的计时函数。</p>
-<p>#####2 自定义缓冲函数</p>
-<p>除了<code>+functionWithName:</code>之外，<code>CAMediaTimingFunction</code>同样有另一个构造函数，一个有四个浮点参数的<code>+functionWithControlPoints::::</code>，使用这个方法，我们可以创建一个自定义的缓冲函数。</p>
-<p><strong>三次贝塞尔曲线</strong></p>
-<p><code>CAMediaTimingFunction</code>有一个叫做<code>-getControlPointAtIndex:values:</code>的方法，可以用来检索曲线的点。</p>
-<p><strong>更加复杂的动画曲线</strong></p>
-<ul>
-<li>用<code>CAKeyframeAnimation</code>创建一个动画，然后分割成几个步骤，每个小步骤使用自己的计时函数</li>
-<li>使用定时器逐帧更新实现动画</li>
-</ul>
-<p><strong>基于关键帧的缓冲</strong></p>
-<p>为了使用关键帧实现反弹动画，我们需要在缓冲曲线中对每一个显著的点创建一个关键帧(在这个情况下，关键点也就是每次反弹的峰值)，然后用缓冲函数把每段曲线链接起来。同时我们也需要通过<code>keyTimes</code>来指定每个关键帧的时间偏移。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> animation<span class="variable">.values</span> = @[</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">140</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">220</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">250</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)]</span><br><span class="line">                         ];</span><br><span class="line"></span><br><span class="line">animation<span class="variable">.timingFunctions</span> = @[</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>]</span><br><span class="line">                                  ];</span><br><span class="line">animation<span class="variable">.keyTimes</span> = @[@<span class="number">0.0</span>, @<span class="number">0.3</span>, @<span class="number">0.5</span>, @<span class="number">0.7</span>, @<span class="number">0.8</span>, @<span class="number">0.9</span>, @<span class="number">0.95</span>, @<span class="number">1.0</span>];</span><br></pre></td></tr></table></figure>
-<p><strong>流程自动化</strong></p>
-<ul>
-<li>自动把任意属性动画分割成多个关键帧</li>
-<li>用一个数学函数表示弹性动画，使得可以对帧</li>
-</ul>
-<p>###五、基于定时器的动画</p>
-<p>#####1 定时帧</p>
-<p>iOS每秒60次刷新屏幕，然后<code>CAAnimation</code>计算出需要展示的新的帧，然后在每次屏幕更新的时候同步绘制上去，<code>CAAnimation</code>最机智的地方在于每次刷新需要展示的时候去计算插值和缓冲。</p>
-<p><strong>NSTimer</strong></p>
-<p>iOS上的每个线程都管理了一个<code>NSRunloop</code>，就是通过一个循环来完成一些任务列表。但是对主线程，这些任务包含如下几项：</p>
-<ul>
-<li>处理触摸事件</li>
-<li>发送和接受网络数据包</li>
-<li>执行使用gcd的代码</li>
-<li>处理计时器行为</li>
-<li>屏幕重绘</li>
-</ul>
-<p>当你设置一个NSTimer，他会被插入到当前任务列表中，然后直到指定时间过去之后才会被执行。但是何时启动定时器并没有一个时间上限，而且它只会在列表中上一个任务完成之后才开始执行。这通常会导致有几毫秒的延迟，但是如果上一个任务过去了很久才完成就会导致延迟很长一段时间。</p>
-<p>所以不能保证定时器精准地一秒钟执行六十次，有时候发生在屏幕重绘之后，这就会使得更新屏幕会有个延迟，看起来就是动画卡壳了。有时候定时器会在屏幕更新的时候执行两次，于是动画看起来就跳动了。</p>
-<p>优化途径：</p>
-<ul>
-<li>用<code>CADisplayLink</code>让更新频率严格控制在每次屏幕刷新之后</li>
-<li>基于真实帧的持续时间而不是假设的更新频率来做动画</li>
-<li>调整动画计时器的run loop模式，这样就不会被别的事件干扰</li>
-</ul>
-<p><strong>CADisplayLink</strong></p>
-<p>它总是在屏幕完成一次更新之前启动，和<code>NSTimer</code>的<code>timeInterval</code>以秒为单位不同，<code>CADisplayLink</code>有一个整型的<code>frameInterval</code>属性，指定了间隔多少帧之后才执行。默认值是1，意味着每次屏幕更新之前都会执行一次。但是如果动画的代码执行起来超过六十分之一秒，你可以指定<code>frameInterval</code>为2，就是说动画每隔一帧执行一次(一秒钟30帧)。</p>
-<p>用<code>CADisplayLink</code>而不是<code>NSTimer</code>，会保证帧率足够连续，使得动画看起来更加平滑，但即使<code>CADisplayLink</code>也不能保证每一帧都按计划执行，一些失去控制的离散的任务或事件(如资源紧张的后台程序)可能会导致动画偶尔地丢帧。当使用NSTimer的时候，一旦有机会计时器就会开启，但是<code>CADisplayLink</code>却不一样：如果它丢失了帧，就会直接忽略它们，然后在下一次更新的时候接着运行。</p>
-<p><strong>计算帧的持续时间</strong></p>
-<p>由于我们不能计算出一帧真实的持续时间，所以需要手动测量。我们可以在每帧开始刷新的时候用<code>CACurrentMediaTime()</code>记录当前时间，然后和上一帧记录的时间去比较。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)animate</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//reset ball to top of screen</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.ballView</span><span class="variable">.center</span> = <span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>);</span><br><span class="line">    <span class="comment">//configure the animation</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.duration</span> = <span class="number">1.0</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timeOffset</span> = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.fromValue</span> = [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>)];</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.toValue</span> = [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)];</span><br><span class="line">    <span class="comment">//stop the timer if it's already running</span></span><br><span class="line">    [<span class="keyword">self</span><span class="variable">.timer</span> invalidate];</span><br><span class="line">    <span class="comment">//start the timer</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.lastStep</span> = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timer</span> = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span></span><br><span class="line">                                selector:<span class="keyword">@selector</span>(step:)];</span><br><span class="line">    [<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop]</span><br><span class="line">                     forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)step:(<span class="built_in">CADisplayLink</span> *)timer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//calculate time delta</span></span><br><span class="line">    <span class="built_in">CFTimeInterval</span> thisStep = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="built_in">CFTimeInterval</span> stepDuration = thisStep - <span class="keyword">self</span><span class="variable">.lastStep</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.lastStep</span> = thisStep;</span><br><span class="line">    <span class="comment">//update time offset</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timeOffset</span> = MIN(<span class="keyword">self</span><span class="variable">.timeOffset</span> + stepDuration, <span class="keyword">self</span><span class="variable">.duration</span>);</span><br><span class="line">    <span class="comment">//get normalized time offset (in range 0 - 1)</span></span><br><span class="line">    <span class="keyword">float</span> time = <span class="keyword">self</span><span class="variable">.timeOffset</span> / <span class="keyword">self</span><span class="variable">.duration</span>;</span><br><span class="line">    <span class="comment">//apply easing</span></span><br><span class="line">    time = bounceEaseOut(time);</span><br><span class="line">    <span class="comment">//interpolate position</span></span><br><span class="line">    <span class="keyword">id</span> position = [<span class="keyword">self</span> interpolateFromValue:<span class="keyword">self</span><span class="variable">.fromValue</span> toValue:<span class="keyword">self</span><span class="variable">.toValue</span></span><br><span class="line">                                        time:time];</span><br><span class="line">    <span class="comment">//move ball view to new position</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.ballView</span><span class="variable">.center</span> = [position <span class="built_in">CGPointValue</span>];</span><br><span class="line">    <span class="comment">//stop the timer if we've reached the end of the animation</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.timeOffset</span> &gt;= <span class="keyword">self</span><span class="variable">.duration</span>) &#123;</span><br><span class="line">        [<span class="keyword">self</span><span class="variable">.timer</span> invalidate];</span><br><span class="line">        <span class="keyword">self</span><span class="variable">.timer</span> = <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>RunLoop模式</strong></p>
-<p>当创建<code>CADisplayLink</code>的时候，我们需要指定一个<code>run loop</code>和<code>run loop mode</code></p>
-<ul>
-<li>NSDefaultRunLoopMode        标准优先级</li>
-<li>NSRunLoopCommonModes  高优先级</li>
-<li>UITrackingRunLoopMode       用于<code>UIScrollView</code>和别的控件的动画</li>
-</ul>
-<p>例子中，我们用了<code>NSDefaultRunLoopMode</code>，但是不能保证动画平滑的运行，所以就可以用<code>NSRunLoopCommonModes</code>来代替。但是如果动画在一个高帧率的情况下运行，你会发现一些别的类似于定时器的任务或类似于滑动的其他iOS动画会暂停，直到动画结束。</p>
-<p>可以同时对<code>CADisplayLink</code>指定多个run loop模式，于是我们可以同时加入<code>NSDefaultRunLoopMode</code>和<code>UITrackingRunLoopMode</code>来保证它不会被滑动打断，也不会被其他UIKit控件动画影响性能：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">_timer = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(step:)];</span><br><span class="line">[<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">[<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">UITrackingRunLoopMode</span>];]</span><br></pre></td></tr></table></figure>
-<p>#####2 物理模拟</p>
-<p><strong>Chipmunk</strong></p>
-<p>Chipmunk物理引擎常用类：</p>
-<ul>
-<li>cpSpace - 这是所有的物理结构体的容器。它有一个大小和一个可选的重力矢量</li>
-<li>cpBody - 它是一个固态无弹力的刚体。它有一个坐标，以及其他物理属性，例如质量、运动和摩擦系数等</li>
-<li>cpShape - 它是一个抽象的几何形状，用来检测碰撞。可以给结构体添加一个多边形，而且cpShape有各种子类来代表不同形状的类型</li>
-</ul>
-
+        <blockquote>
+<p>Core Animation的性能优化<br>
       
     </div>
     
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/主题/">主题</a></li></ul>
+	</div>
+
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/11/iOS-Core-Animation——性能优化/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-iOS-Core-Animation——动画" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/11/iOS-Core-Animation——动画/" class="article-date">
+  	<time datetime="2016-04-11T06:19:26.000Z" itemprop="datePublished">2016-04-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/11/iOS-Core-Animation——动画/">iOS Core Animation——动画</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>Core Animation是一套包含图形绘制，投影，动画的 Objective–C 类集合。它通过开发人员所熟悉的应用程序套件和Cocoa Touch视图架构的抽象分层模式，同时使用先进的合作效果提供了一套流畅的动画。<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/主题/">主题</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/11/iOS-Core-Animation——动画/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -420,280 +324,7 @@
   
     <div class="article-meta">
       <a href="/2016/04/11/iOS-Core-Animation——图层/" class="article-date">
-  	<time datetime="2016-04-11T04:53:06.000Z" itemprop="datePublished">2016-04-11</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>title: iOS Core Animation——图层<br>date: 2016-04-11 11:54:04</p>
-<p>#Core Animation—图层</p>
-<p>Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕上不同的可视内容，内容是被分解成独立的图层，存储在图层树的体系之中。于是这个树形成了<code>UIKit</code>以及iOS应用程序当中你所能在屏幕上看见的一切的基础。</p>
-<p>###一、图层树</p>
-<p>#####1.1图层与视图</p>
-<p>1.<code>UIView</code></p>
-<p>一个视图就是在屏幕上显示的一个矩形块（比如图片，文字或者视频），它能够拦截类似于鼠标点击或者触摸手势等用户输入。视图在层级关系中可以互相嵌套，一个视图可以管理它的所有子视图的位置。</p>
-<ul>
-<li>可以处理触摸事件</li>
-<li>支持基于Core Graphics绘图</li>
-<li>做放射变化(例如旋转或者缩放)</li>
-<li>简单的类似于滑动或者渐变的动画</li>
-</ul>
-<p>2.<code>CALayer</code></p>
-<p>概念上于UIView类似，同样也是一些被层级关系树管理的矩形块，同样可以包含一些内容(图片、文本或背景色)，管理子图层的位置。它们有一些属性和方法用来做动画和变换。</p>
-<p>与UIView不同的是CALayer不处理用户的交互，CALayer并不清楚具体的响应链(iOS通过视图层级关系用来传送触摸事件的机制)，于是它并不能够响应事件，即使它提供了一些方法来判断是否一个触点在图层的范围之内。</p>
-<p>3.平行的层级关系</p>
-<p>每一个UIView都有一个CALayer实例的图层属性(backing layer)，视图的职责是创建并管理这个图层，以确保当子视图在层级关系中添加或移除时，他们关联的图层也同样在对应的层级关系树中有相同的操作。</p>
-<p>实际上UIView关联的图层才是真正用来在屏幕上显示和做动画的，UIView仅仅是对它的一个封装，提供了一些iOS类似于处理触摸的具体功能，以及Core Animation底层方法的高级接口。</p>
-<p>UIView和CALayer的职责分离：</p>
-<p>绘图、布局、动画，把这种功能的逻辑分开应用到独立的Core Animation框架，苹果就能够在iOS和Mac OS之间共享代码，使得开发更为便捷。</p>
-<p>实际上，这里并不是两个层级关系，而是四个，每一个都扮演不同的角色，除了视图层级和图层树之外，还存在呈现树和渲染树。</p>
-<p>#####1.2图层的能力</p>
-<p>UIView的高级API间接地使得动画变得简单，但缺乏灵活性，CALayer特有的功能：</p>
-<ul>
-<li>阴影、圆角、带颜色的边框</li>
-<li>3D变换</li>
-<li>非矩形范围</li>
-<li>透明遮罩</li>
-<li>多级非线性动画</li>
-</ul>
-<p>###二、寄宿图</p>
-<p>图层中包含的图</p>
-<p>#####2.1 contents属性</p>
-<p>contents是CALayer的一个id类型属性，理论上可以赋任何值，但如果不是CGImage，图层将是空白的；</p>
-<p>contents这个奇怪的表现是由MAC OS得历史原因造成的；在Mac OS上，这个属性对CGImage和NSImage类型的值都起作用，但在iOS上，UIImage赋值只能得到空白的图层。</p>
-<p>contents真正的赋值类型应该是CGImageRef(指向CGImage结构的指针)，UIImage的CGImage属性返回一个CGImageRef，如果直接赋给contents会编译错误，因为CGImageRef不是一个真正的Cocoa对象，而是一个Core Foundation类型，需要通过bridged关键字转换，如下：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">layer.contents = (__bridged id)image.CGImage;</span><br></pre></td></tr></table></figure>
-<p><strong>contentGravity</strong></p>
-<p>该属性决定了内容在图层CALayer的边界中怎么对齐</p>
-<p><strong>contentsScale</strong></p>
-<p>该属性定义了寄宿图的像素尺寸和视图大小的比例，默认为1.0；</p>
-<p>如果contentsScale设置为1.0，将会以每个点1个像素绘制图片，如果设置为2.0，则会以每个点2个像素绘制图片，这就是我们熟知的Retina屏幕。</p>
-<p>当用代码的方式来处理寄宿图的时候，一定要记住要手动设置图层的contentsScale属性，否则，你的额突破在Retaina设备上就显示的不正确啦，如下：</p>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">layer.contentsScale = <span class="string">[UIScreen mainScreen]</span>.scale;</span><br></pre></td></tr></table></figure>
-<p><strong>maskToBounds</strong></p>
-<p>UIView有一个叫<code>clipsToBounds</code>的属性决定是否显示超出边界的内容，CALayer对应的属性叫做<code>masksToBounds</code>。</p>
-<p><strong>contentsRect</strong></p>
-<p>该属性允许我们在图层边框里显示寄宿图的一个子域。这涉及到图片是如何显示和拉伸的，所以要比contentsGravity灵活多了。</p>
-<p>和bounds、frame不同，contentsRect不是按点来计算，它使用了单位坐标，单位坐标是指0到1之间，是一个相对值。所以他们是相对于寄宿图的尺寸的。contentsRect默认为{0,0,1,1}。</p>
-<p>iOS使用了以下的坐标系统：</p>
-<ul>
-<li>点——点就像虚拟的像素，也被称作逻辑像素。在标准设备上，一个点就是一个像素，但在Retina设备上，一个点等于2*2个像素。iOS用点作为屏幕的坐标测算体系就是为了在Retina设备和普通设备上能有一致的视觉效果。</li>
-<li>像素——物理像素坐标并不会用了屏幕布局，但是仍然与图片有相对关系。UIImage是一个屏幕分辨率的解决方案，所以指定点来度量大小。但是一些底层的图片表示如CGImage就会使用像素，所以在Retina设备和普通设备上，他们表现出来了不同的大小。</li>
-<li>单位——对于与图片大小或是图层边界相关的显示，单位坐标是一个方便的度量方式，当大小改变的时候，也不需要再次调整。</li>
-</ul>
-<p><strong>contentsCenter</strong></p>
-<p>该属性定义了一个固定的边框和一个在图层上可拉伸的区域。改变contentsCenter的值并不会影响到寄宿图的显示，除非这个图层的大小改变了，你才看的到效果。</p>
-<p>默认情况下，contentsCenter为{0,0,1,1}，这意味着如果大小(由contentsGravity决定)改变了，那么寄宿图将会均匀地拉伸开。</p>
-<p>#####2.2 Custom Drawing</p>
-<p>给contents赋CGImage的值不是唯一的设置寄宿图的方法。我们也可以直接用CoreGraphics直接绘制寄宿图。能够通过继承UIView并实现<code>-drawRect：</code>方法来自定义绘制。</p>
-<blockquote>
-<p>-drawRect:方法没有默认的实现，因为对于UIView来说，寄宿图并不是必须的，它不在意那到底是单调的颜色还是有一个图片的实例。如果UIView检测到-drawRect：方法被调用了，它就会为视图分配一个寄宿图，这个寄宿图的像素尺寸等于视图大小乘以contentScale的值。</p>
-</blockquote>
-<p>如果你不需要寄宿图，那就不要创建这个方法，这会造成CPU资源和内存的浪费，这也是为什么苹果建议：如果没有自定义绘制的任务就不要在子类中写一个空的-drawRect：方法。</p>
-<p>当视图在屏幕上出现的时候，-drawRect方法就会被自动调用。-drawRect方法里面的代码利用Core Graphics去绘制一个寄宿图，然后内容就会被缓存起来直到它需要被更新(通常是因为开发者调用了-setNeedsDisplay方法，尽管影响到表现效果的属性值被更改时，一些视图类型会被自动重绘，如bounds属性)。虽然<code>-drawRect</code>方法是一个UIView方法，事实上都是底层的CALayer安排了重绘工作和保存了因此产生的图片。</p>
-<p>###三、图层几何学</p>
-<p>#####3.1布局</p>
-<p>布局属性：UIView(frame、bounds、center)  CALayer(frame、bounds、position)</p>
-<p>frame：图层的外部坐标(也就是在父图层上占据的空间)</p>
-<p>bounds：内部坐标({0,0}通常是图层的左上角)</p>
-<p>position/center：相对于父图层anchorPoint所在的位置</p>
-<p>视图的frame、bounds和center属性仅仅是存取方法，当操纵视图的frame时，实际上是在改变位于视图下方的CALayer的frame，不能够独立于图层之外改变视图的frame。</p>
-<p>对于视图或图层来说，frame并不是一个非常清晰的属性，它其实是一个虚拟属性，是根据bounds、position、transform计算而来，所以当其中任何一个值发生改变，frame都会变化；相反，改变frame的值同样会影响到他们当中的值。</p>
-<blockquote>
-<p>记住当对图层做变换时，比如旋转或缩放，frame实际上代表了覆盖在图层旋转之后的整个轴对齐的矩形区域，也就是说frame的宽高可能和bounds的宽高不再一致。</p>
-</blockquote>
-<p>#####3.2锚点</p>
-<blockquote>
-<p>视图的center属性和图层的position属性都是指定了anchorPoint相对于父图层的位置。图层的anchorPoint通过position来控制它的frame位置，你可以认为anchorPoint是用来移动图层的把柄。</p>
-</blockquote>
-<p>position是layer中的anchorPoint点在superLayer中的位置。</p>
-<p>#####3.3坐标系</p>
-<p>和视图一样，图层在图层树中也是相对于父图层按层级关系放置，一个图层的position依赖于它父图层的bounds，如果父图层发生了移动，它的所有子图层也会跟着移动。</p>
-<p>CALayer给不同坐标系之间的图层转换提供了一些工具类方法：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="pp">- <span class="params">(<span class="variable">CGPoint</span>)</span>convertPoint:<span class="params">(<span class="variable">CGPoint</span>)</span>point fromLayer:<span class="params">(<span class="variable">CALayer</span> *)</span>layer;</span><br><span class="line">- <span class="params">(<span class="variable">CGPoint</span>)</span>convertPoint:<span class="params">(<span class="variable">CGPoint</span>)</span>point toLayer:<span class="params">(<span class="variable">CALayer</span> *)</span>layer;</span><br><span class="line">- <span class="params">(<span class="variable">CGRect</span>)</span>convertRect:<span class="params">(<span class="variable">CGRect</span>)</span>rect fromLayer:<span class="params">(<span class="variable">CALayer</span> *)</span>layer;</span><br><span class="line">- <span class="params">(<span class="variable">CGRect</span>)</span>convertRect:<span class="params">(<span class="variable">CGRect</span>)</span>rect toLayer:<span class="params">(<span class="variable">CALayer</span> *)</span>layer;</span></span><br></pre></td></tr></table></figure>
-<p><strong>Z坐标轴</strong></p>
-<p>和UIView严格的二维坐标系不同，CALayer存在一个三维空间当中。除了position和anchorPoint属性外，CALayer还有另外两个属性，zPosition和anchorPointZ，二者都是在Z轴上描述图层位置的浮点类型。</p>
-<p>zPosition属性在大多数情况下并不常用。CATransform3D在三维空间移动和旋转图层外，最实用的功能就是改变图层的显示顺序。</p>
-<p>#####3.4 Hit Testing</p>
-<p>CALayer并不关心任何响应链事件，所以不能直接处理触摸事件或者手势。但是它有一系列的方法帮你处理事件：<code>-containsPoint:</code>和<code>-hitTest:</code>。</p>
-<blockquote>
-<p>-hitTest方法同样接受一个CGPoint类型参数，而不是BOOL类型，它返回图层本身，或者包含这个坐标点的叶子节点图层。</p>
-</blockquote>
-<p>当调用图层的-hitTest方法时，测算的顺序严格依赖于图层树当中的图层顺序(和UIView处理事件类似)。之前提到的zPosition属性可以明显改变屏幕上图层的顺序，但不能改变事件传递的顺序。</p>
-<p>这意味着如果改变了图层的z轴顺序，你会发现将不能够检测到最前方的视图点击事件，这是因为被另一个图层遮盖住了，虽然它的zPosition值较小，但是图层树中的顺序考前。</p>
-<p>#####3.5自动布局</p>
-<p>UIViewAutoresizingMask类型常量应用于当父视图改变尺寸的时候，相应UIView的frame也跟着更新的场景(通常用于横竖屏切换)。</p>
-<p>当使用视图的时候，可以充分利用UIVIew类接口暴露出来的UIViewAutoresizingMask和NSLayoutConstraint API，但如果想随意控制CALayer的布局，就需要手工操作。最简单的方法就是使用CALayerDelegate如下函数：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="pp">- <span class="params">(void)</span>layoutSublayerOfLayer:<span class="params">(<span class="variable">CALayer</span> *)</span>layer;</span></span><br></pre></td></tr></table></figure>
-<p>当图层的bounds发生改变，或者图层的-setNeedsLayout方法被调用时，这个函数将会被执行。这使得你可以手动地重写摆放或者重写调整子图层的大小，但是不能像UIView的autoresizingMask和constraints属性做到自适应屏幕旋转。</p>
-<p>这也是为什么最好使用视图而不是单独的图层来构建应用程序的另一个重要原因之一。</p>
-<p>###四、视觉效果</p>
-<p>#####4.1圆角</p>
-<p>CALayer有一个叫做cornerRadius的属性控制着图层角的曲率。默认情况下，这个曲率只影响背景颜色而不影响背景图片或是子图层。不过，如果把masksToBounds设置成YES的话，图层里面的所有东西都会被截取。</p>
-<p>#####4.2图层边框</p>
-<p>borderWidth和borderColor</p>
-<p>边框是绘制在图层边界里面，而且在所有子内容之前，也在子图层之前。</p>
-<p>#####4.3图层阴影</p>
-<p>阴影可以达到图层深度暗示的效果，也能够用来强调正在显示的图层和优先级。</p>
-<p>给<code>shadowOpacity</code>属性一个大于默认值0的值，阴影就可以显示在任意图层之下。若要改动阴影的表现，你可以使用CALayer的另外三个属性：<code>shadowColor</code> <code>shdowOffset</code> <code>shadowRadius</code></p>
-<p><strong>阴影裁剪</strong></p>
-<p>和图层边框不同，图层的阴影继承自内容的外形，而不是根据边界和角半径来确定。为了计算出阴影的形状，Core Animation会将寄宿图(包括子视图)考虑在内，然后通过这些来完美搭配图层形状从而创建一个阴影。</p>
-<p><strong>shadowPath属性</strong></p>
-<p>我们已经知道图层阴影并不总是方的，而是从图层内容的形状继承而来。这看上去不错，但是实时计算阴影也是一个非常消耗资源的，尤其是图层有多个子图层，每个图层还有一个有透明效果的寄宿图的时候。</p>
-<p>如果你事先知道你的阴影形状会是什么样子的，你可以通过指定一个<code>shadowPath</code>来提高性能。shadowPath是一个CGPathRef类型(一个指向CGPath的指针)。CGPath是一个Core Graphics对象，用来指定任意的一个矢量图形。我们可以通过这个属性单独于图层形状之外指定阴影的形状。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGMutablePathRef</span> path = <span class="built_in">CGPathCreateMutable</span>();</span><br><span class="line"><span class="built_in">CGPathAddRect</span>(path, <span class="literal">NULL</span>, layer<span class="variable">.bounds</span>);</span><br><span class="line">layer<span class="variable">.shadowPath</span> = path;</span><br><span class="line"><span class="built_in">CGPathRelease</span>(path);</span><br></pre></td></tr></table></figure>
-<p>如果是一个矩形或者是圆，用CGPath会相当简单明了。但是如果是更加复杂一点的图形，UIBezierPath类会更合适，它是一个由UIKit提供的在CGPath基础上的Objective-C包装类。</p>
-<p>#####4.4图层蒙版</p>
-<p>通过<code>masksToBounds</code>属性，我们可以沿边界裁剪图形；通过<code>cornerRadius</code>属性可以设定一个圆角。但是有时候你希望展现的内容不是在一个矩形或圆角矩形，比如，你想展示一个有星形框架的图片，又或者想让一些古卷文字慢慢渐变成背景色，而不是一个突兀的边界。</p>
-<p>使用一个32位有alpha通道的png图片通常是创建一个无矩形视图最方便的方法，你可以给它指定一个透明蒙版来实现。但是这个方法不能让你以编码的方式动态的生成蒙版，也不能让子图层或子视图裁剪成同样的形状。</p>
-<p>CALayer有一个叫做mask的属性可以解决这个问题。这个属性本身就是个CALayer类型，有和其他图层一样的绘制和布局属性。它类似于一个子图层，相对于父图层(即拥有该属性的图层)布局，但是它却不是一个普通的子图层。不同于那些绘制在父图层中的子图层，mask图层定义了父图层的部分可见区域。</p>
-<p>mask图层的color属性是无关紧要的，真正重要的是图层的轮廓。mask属性就像是一个饼干切割机，mask图层实心的部分会被保留下来，其他的则会被抛弃。</p>
-<p>如果mask图层比父图层要小，只有在mask图层里面的内容才是它关心的，除此以外的一切都会被隐藏起来。</p>
-<p>CALayer蒙版图层真正厉害的地方在于蒙版图不局限于静态图。任何有图层构成的都可以作为mask属性，这意味着你的蒙版可以通过代码甚至动画实时生成。</p>
-<p>#####4.5拉伸过滤</p>
-<p>当我们视图显示一个图片的时候，都应该正确地显示这个图片(意即：以正确的比例和正确的1：1像素显示在屏幕上)。原因如下：</p>
-<ul>
-<li>能够显示最好的画质，像素既没有被压缩也没有被拉伸</li>
-<li>能更好的使用内存，因为这就是所有你要存储的东西</li>
-<li>最好的性能表现，CPU不需要为此额外的计算</li>
-</ul>
-<p>不过有时候，显示一个非真实大小的图片确实是我们需要的效果。比方说一个头像或是图片的缩略图，再比方说一个可以被拖曳和伸缩的大图。这些情况下，为同一图片的不同大小存储不同的图片显得又不切实际。</p>
-<p>当图片需要显示不同的大小的时候，有一种叫做拉伸过滤的算法就起到了作用。它作用于原图的像素上并根据需要生成新的像素显示在屏幕上。</p>
-<p>事实上，重绘图片大小也没有一个统一的通用算法。这取决于需要拉伸的内容，放大或是缩小的需求等这些因素。CALayer为此提供了三种拉伸过滤方法，如下：</p>
-<ul>
-<li>kCAFilterLinear</li>
-<li>kCAFilterNearest</li>
-<li>kCAFilterTrilinear</li>
-</ul>
-<p>minification(缩小图片)和magnification(放大图片)默认的过滤器都是<code>kCAFilterLinear</code>，这个过滤器采用双线性滤波算法，它在大多数情况下都表现良好。双线性滤波算法通过对多个像素取样最终生成新的值，得到一个平滑的表现不错的拉伸。但是放大倍数比较大的时候图片就模糊不清了。</p>
-<p><code>kCAFilterTrilinear</code>和<code>kCAFilterLinear</code>非常相似，大部分情况下二者都看不出来有什么差别。但是，较双线性滤波算法而言，三线性滤波算法存储了多个大小情况下的图片(也叫多重贴图)，并三维取样，同时结合大图和小图的存储进而得到最后的结果。</p>
-<p>这个方法的好处在于算法能够从一系列已经接近于最终大小的图片中得到想要的结果，也就是说不要对很多像素同步取样。这不仅提高了性能，也避免了小概率因舍入错误引起的取样失灵的问题。</p>
-<p><code>kCAFilterNearest</code>是一种比较武断的方法。从名字不难看出，这个算法(也叫最近过滤)就是取样最近的单像素点而不管其他的颜色。这样做非常快，也不会使图片模糊。但是，最明显的效果就是，会使得压缩图片更糟，图片放大之后也显得块状或是马赛克严重。</p>
-<p>总的来说，对于比较小的图或是差异特别明显，极少线性的大图，最近过滤算法会保留这种差异明显的特质以呈现更好的结果。但是对于大多数的图尤其是有很多斜线或是曲线轮廓的图片来说，最近过滤算法会导致更差的结果。换句话说，线性过滤保留了形状，最近过滤则保留了像素的差异。</p>
-<p>#####4.6组透明</p>
-<p>UIView有一个叫做<code>alpha</code>的属性来确定视图的透明度。CALayer有一个等同的属性叫做<code>opacity</code>，这两个属性都是影响子层级的。也就是说，如果你给一个图层设置了opacity属性，那它的子图层都会受此影响。</p>
-<p>当你显示一个50%透明度的图层时，图层的每个像素都会一半显示自己的颜色，另一半显示图层下面的颜色。这是正常的透明度的表现。但是如果图层包含一个同样显示50%透明的子图层时，你所看到的视图，50%来自子视图，25%来自图层本身的颜色，另外25%则来自背景色。(透明度混合叠加后变成75%)</p>
-<blockquote>
-<p>理想状况下，当你设置了一个图层的透明度，你希望它包含的整个图层树像一个整体一样的透明效果。你可以通过设置info.plist文件中的<code>UIViewGroupOpacity</code>为YES来达到这个效果，但是这个设置会影响到这个应用，整个app可能会受到不良影响。如果<code>UIViewGroupOpacity</code>并未设置，iOS6和以前的版本会默认为NO。</p>
-</blockquote>
-<p>另一个方法就是，你可以设置CALayer的一个叫做<code>shouldRasterize</code>属性来实现组透明的效果，如果它被设置为YES，在应用透明度之前，图层及其子图层都会被整合成一个整体的图片，这样就没有透明度混合的问题了。</p>
-<p>为了启用<code>shouldRasterize属性</code>，我们设置了图层的<code>rasterizationScale</code>属性。默认情况下，所有图层拉伸都是1.0，所以你使用了<code>shouldRasterize</code>属性，你就要确保你设置了<code>rasterizationScale</code>属性去匹配屏幕，以防止出现Retina屏幕像素化得问题。</p>
-<p>###五、变换</p>
-<p>#####5.1仿射变换</p>
-<p>实际上UIView的transform属性是一个<code>CGAffineTransform</code>类型，用于在二维空间做旋转，缩放和平移。<code>CGAffineTransform</code>是一个可以和二维空间向量(如CGPoint)做乘法的3x2的矩阵。</p>
-<p>当对图层应用变换矩阵，图层矩形内的每一个点都被相应地做变换，从而形成一个新的四边形的形状。<code>CGAffineTransform</code>中的仿射的意思是无论变换矩阵用什么值，图层中平行的两条线在变换之后仍然保持平行。</p>
-<p><strong>创建一个CGAffineTransform</strong></p>
-<p>Core Graphics提供了一系列函数，对完全没有数学基础的开发者也能够简单地做一些变换。如下几个函数都创建了一个<code>CGAffineTransform</code>实例：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">CGAffineTransformMakeRotation</span><span class="params">(CGFloat angle)</span></span> <span class="comment">//旋转</span></span><br><span class="line"><span class="function"><span class="title">CGAffineTransformMakeScale</span><span class="params">(CGFloat sx, CGFloat sy)</span></span> <span class="comment">//缩放</span></span><br><span class="line"><span class="function"><span class="title">CGAffineTransformMakeTranslation</span><span class="params">(CGFloat tx, CGFloat ty)</span></span>  <span class="comment">//平移</span></span><br></pre></td></tr></table></figure>
-<p>UIView可以通过设置<code>transform</code>属性做变换，但实际上它只是封装了内部图层的变换。</p>
-<p>CALayer同样也有一个<code>transform</code>属性，但它的类型是<code>CATransform3D</code>，而不是<code>CGAffineTransform</code>。CALayer对应于UIView的<code>transform</code>属性叫做<code>affineTransform</code>。</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI_4)<span class="comment">;</span></span><br><span class="line">layer.affineTransform = transform<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p><strong>混合变换</strong></p>
-<p>Core Graphics提供了一系列的函数可以在一个变换的基础上做更深层次的变换，如果做一个既要缩放又要旋转的变换，这就会非常有用了。例如下面几个函数：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGAffineTransformRotate</span>(<span class="built_in">CGAffineTransform</span> t, <span class="built_in">CGFloat</span> angle)</span><br><span class="line"><span class="built_in">CGAffineTransformScale</span>(<span class="built_in">CGAffineTransform</span> t, <span class="built_in">CGFloat</span> sx, <span class="built_in">CGFloat</span> sy)</span><br><span class="line"><span class="built_in">CGAffineTransformTranslate</span>(<span class="built_in">CGAffineTransform</span> t, <span class="built_in">CGFloat</span> tx, <span class="built_in">CGFloat</span> ty)</span><br></pre></td></tr></table></figure>
-<p>当操纵一个变换的时候，初始生成一个什么都不做的变换很重要——也就是创建一个<code>CGAffineTransform</code>类型的空值，矩阵论中称作单位矩阵，Core Graphics同样也提供了一个方便的常量：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGAffineTransformIdentity</span></span><br></pre></td></tr></table></figure>
-<p>最后，如果需要混合两个已经存在的变换矩阵，就可以用如下方法，在两个变换的基础上创建一个新的变换：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGAffineTransformConcat</span>(<span class="built_in">CGAffineTransform</span> t1，<span class="built_in">CGAffineTransform</span> t2);</span><br></pre></td></tr></table></figure>
-<p>例子：先缩小50%，再旋转30度，最后向右移动200个像素</p>
-<figure class="highlight rsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CGAffineTransform <span class="built_in">transform</span> = CGAffineTransformIdentity;</span><br><span class="line"><span class="built_in">transform</span> = CGAffineTransformScale(<span class="built_in">transform</span>, <span class="number">0.5</span>, <span class="number">0.5</span>);</span><br><span class="line"><span class="built_in">transform</span> = CGAffineTransformRotate(<span class="built_in">transform</span>, M_PI / <span class="number">180.0</span> * <span class="number">30.0</span>);</span><br><span class="line"><span class="built_in">transform</span> = CGAffineTransformTranslate(<span class="built_in">transform</span>, <span class="number">200</span>, <span class="number">0</span>);</span><br><span class="line">layer.affineTransform = <span class="built_in">transform</span>;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：图片向右发生了平移，但并没有指定距离那么远(200像素)，另外它还有点向下发生了平移。原因在于当你按顺序做了变换，上一个变换的结果将会影响之后的变换，所以200像素的向右平移同样也被旋转了30度，缩小了50%，所以它实际上是斜向移动了100像素。</p>
-<p>这意味着变换的顺序会影响最终的结果，也就是说旋转之后的平移和平移之后的旋转结果可能不同。</p>
-</blockquote>
-<p><strong>5.2 3D变换</strong></p>
-<p>CG的前缀告诉我们，<code>CGAffineTransform</code>类型属于Core Graphics框架，Core Graphics实际上是一个严格意义上的2D绘图API，并且<code>CGAffineTransform</code>仅仅对2D变换有效。</p>
-<p><code>transform</code>属性(<code>CATransform3D</code>类型)可以让图层在3D空间内移动或者旋转。</p>
-<p>和<code>CGAffineTransform</code>类似，<code>CATransform3D</code>是一个可以在3维空间内做变换的4x4的矩阵。</p>
-<p>和<code>CGAffineTransform</code>矩阵类似，Core Animation提供了一系列的方法用来创建和组合<code>CATransform3D</code>类型的矩阵，和Core Graphics的函数类似，但是3D的平移和旋转多了一个z参数，并且旋转函数除了angle之外多了xyz三个参数，分别决定了每个坐标轴方向上的旋转：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CATransform3DMakeRotation</span>(<span class="built_in">CGFloat</span> angel, <span class="built_in">CGFloat</span> x, <span class="built_in">CGFloat</span> y, <span class="built_in">CGFloat</span> z)</span><br><span class="line"><span class="built_in">CATransform3DMakeScale</span>(<span class="built_in">CGFloat</span> sx, <span class="built_in">CGFloat</span> sy, <span class="built_in">CGFloat</span> sz)</span><br><span class="line"><span class="built_in">CATransform3DMakeTranslation</span>(<span class="built_in">CGFloat</span> tx, <span class="built_in">CGFloat</span> ty, <span class="built_in">CGFloat</span> tz)</span><br></pre></td></tr></table></figure>
-<p><strong>透视投影</strong></p>
-<p>在真实世界中，当物体远离我们的时候，由于视角的原因看起来会变小，理论上说远离我们的视图的边要比靠近视角的边更短，但实际上并没有发生，而我们当前的视角是等距离的，也就是在3D变换中仍然保持平行，和之前提到的仿射变换类似。</p>
-<p>在等距投影中，远处的物体和近处的物体保持同样的缩放比例，这种投影也有它自己的用处(例如建筑绘图，颠倒，和伪3D视频)，但当前我们并不需要。</p>
-<p>为了做一些修正，我们需要引入<em>投影变换</em>(又称作z变换)来对除了旋转之外的变换矩阵做一些修改，Core Animation并没有给我们提供设置透视变换的函数，因此我们需要手动修改矩阵值，幸运的是，很简单：</p>
-<p><code>CATransform3D</code>的透视效果通过一个矩阵中一个很简单的元素来控制：<code>m34</code>。<code>m34</code>用于按比例缩放X和Y值来计算到底要离视角多远。</p>
-<p><code>m34</code>的默认值是0，我们可以通过设置<code>m34</code>为<code>-1.0/d</code>来应用透视效果，<code>d</code>代表了想象中视角相机和屏幕之间的距离，以像素为单位，那应该如何计算这个距离？实际上并不需要，大概估算一个就好了。</p>
-<p>因为视角相机实际上并不存在，所以可以根据屏幕上的显示效果自由决定它的防止的位置。通常500-1000就已经很好 ，但对于特定的图层有时候更小或者更大的值会看起来更舒服，减少距离的值会增强透视效果，所以一个非常微小的值会让它看起来更加失真，然而一个非常大的值会让它基本失去透视效果；</p>
-<figure class="highlight rsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CATAransform3D <span class="built_in">transform</span> = CATransform3DIdentity;</span><br><span class="line"><span class="built_in">transform</span>.m34 = -<span class="number">1.0</span> / <span class="number">500.0</span>;</span><br><span class="line"><span class="built_in">transform</span> = CATransform3DRotate(<span class="built_in">transform</span>, M_PI_4, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">layer.<span class="built_in">transform</span> = <span class="built_in">transform</span>;</span><br></pre></td></tr></table></figure>
-<p><strong>灭点</strong></p>
-<p>当在透视角绘图时，远离相机视角的物体将会变小变远，当远离一个极限距离，它们可能就缩成了一个点，于是所有的物体最后都汇聚消失在同一个点。</p>
-<p>在现实中，这个点通常是视图的中心，于是为了在应用中创建拟真效果的透视，这个点应该聚在屏幕中点，或者至少是包含所有3D对象的视图中点。</p>
-<p>Core Animation定义了这个点位于变换图层的anchorPoint(通常位于图层中心)。这就是说，当图层发生变换时，这个点永远位于图层变换之前的anchorPoint的位置。</p>
-<p>当改变一个图层的position，你也改变了它的灭点，做3D变换的时候要时刻记住这一点，当你视图通过调整<code>m34</code>来让它更加有3D效果，应该首先把它放置于屏幕中央，然后通过平移来把它移动到指定位置(而不是直接改变它的position)，这样所有的3D图层都共享一个灭点。</p>
-<p><strong>sublayerTransform属性</strong></p>
-<p>如果有多个视图或者图层，每个都做3D变换，那就需要分别设置相同的<code>m34</code>值，并且确保在变换之前都在屏幕中央共享同一个position，如果用一个函数封装这些操作的确会更加方便，但仍然有限制(例如，你不能再Interface Builder中摆放视图)，这里有一个更好的方法。</p>
-<p>CALayer有一个属性叫做<code>sublayerTransform</code>。它也是CATransform3D类型，但和对一个图层的变换不同，它影响到所有的子图层。这意味着你可以一次性对包含这些图层的容器做变换，于是所有的子图层都自动继承了这个变换方法。</p>
-<p>相较而言，通过在一个地方设置透视变换会很方便，同时它会带来另一个显著的优势：灭点被设置在容器图层的中点，从而不需要再对子图层分别设置了。这意味着你可以随意使用position和frame来放置子图层，而不需要把它们放置在屏幕中点，然后为了保证统一的灭点用变换来做平移。</p>
-<p><strong>背面</strong></p>
-<p>我们既然可以在3D场景下旋转图层，那么也可以从背面去观察它。</p>
-<p>图层是双面绘制的，反面显示的是正面的一个镜像图片。</p>
-<p>但这并不是一个很好的特性，因为如果图层包含文本或者其他控件，那用户看到这些内容的镜像图片当然会感到困惑。另外也有可能造成资源的浪费：想象用这些图层形成一个不透明的固态立方体，既然永远都看不见这些图层的背面，那为什么浪费GPU来绘制它们呢？</p>
-<p>CALayer有一个叫做<code>doubleSided</code>的属性来控制图层的背面是否要被绘制。这是一个BOOL类型，默认为YES，如果设置为NO，那么当图层正面从相机视角消失的时候，它将不会被绘制。</p>
-<p><strong>扁平化图层</strong></p>
-<p>如果对包含已经做过变换的图层的图层做反方向的变换将会发生什么呢？</p>
-<p>由于尽管Core Animation图层存在于3D空间之内，但它们并不都存在同一个3D空间。每个图层的3D场景其实是扁平化的，当你从正面观察一个图层，看到的实际上由子图层创建的想象出来的3D场景，当你倾斜这个图层，你会发现实际上这个3D场景仅仅是被绘制在图层的表面。</p>
-<p>类似的，当你在玩一个3D游戏，实际上仅仅是把屏幕做了一次倾斜，或许在游戏中可以看见有一面墙在你面前，但是倾斜屏幕并不能够看见墙里面的东西。所有场景里面绘制的东西并不会随着你观察它的角度改变而发生变化；图层也是同样的道理。</p>
-<p>这使得用Core Animation创建非常复杂的3D场景变得十分困难。你不能够使用图层树去创建一个3D结构的层级关系——在相同场景下的任何3D表面必须和同样的图层保持一致，这是因为每个父视图都把它的子视图扁平化了。</p>
-<p>至少当你用正常的CALayer的时候是这样，CALayer有一个叫做<code>CATransformLayer</code>的子类来解决这个问题。</p>
-<p>###六、专用图层</p>
-<p>#####6.1 CAShapeLayer</p>
-<p><code>CAShapeLayer</code>是一个通过矢量图形而不是bitmap来绘制的图层子类。你指定诸如颜色和线宽等属性，用CGPath来定义想要绘制的图形，最后CAShapeLayer就自动渲染出来了。当然，你也可以用Core Graphics直接向原始的CALayer的内容绘制一个路径，相比之下，使用<code>CAShapeLayer</code>有以下优点：</p>
-<ul>
-<li>渲染快速。CAShapeLayer使用了硬件加速，绘制同一图形会比用Core Graphics快很多。</li>
-<li>高效使用内存。一个CAShapeLayer不需要像普通CALayer一样创建一个寄宿图形，所以无论有多大，都不会占用太多的内存。</li>
-<li>不会被图层边界裁剪掉。一个CAShapeLayer可以在边界之外绘制。你的图层路径不会像在使用Core Graphics的普通CALayer一样被裁剪掉。</li>
-<li>不会出现像素化。当你给CAShapeLayer做3D变换时，它不像一个有寄宿图的普通图层一样变得像素化。</li>
-</ul>
-<p><strong>创建一个CGPath</strong></p>
-<p>CAShapeLayer可以用来绘制所有能够通过CGPath来表示的形状。这个形状不一定要闭合，图层路径也不一定要不可破，事实上你可以在一个图层上绘制好几个不同的形状。你可以控制一些属性比如<code>lineWidth</code>(线宽，用点表示单位)，<code>lineCap</code>(线条结尾的样子)，和<code>lineJoin</code>(线条之间的结合点的样子)；但是在图层层面你只有一次机会设置这些属性。如果你想用不同颜色或风格来绘制多个形状，就不得不为每个形状准备一个图层了。</p>
-<p><strong>圆角</strong></p>
-<p>我们创建圆角矩形其实就是人工绘制单独的直线和弧度，但是事实上UIBezierPath有自动绘制圆角矩形的构造方法，下面这段代码绘制了一个有三个圆角一个直角的矩形：</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CGRect</span> rect = <span class="built_in">CGRectMake</span>(<span class="number">50</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">100</span>);</span><br><span class="line"><span class="built_in">CGSie</span> radii = <span class="built_in">CGSizeMake</span>(<span class="number">20</span>, <span class="number">20</span>);</span><br><span class="line"><span class="built_in">UIRectCorner</span> corners = <span class="built_in">UIRectCornerTopRight</span> | ...;</span><br><span class="line"><span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> beziePathWithRoundedRect:rect byRoundingCorners:corners cornerRadii:radii];</span><br></pre></td></tr></table></figure>
-<p>我们可以通过这个图层路径绘制一个既有直角又有圆角的视图。如果我们想依照此图形来剪裁视图内容，我们可以吧CAShapeLayer作为视图的宿主图层，而不是添加一个子视图(图层蒙版知识相关)。</p>
-<p>#####6.2 CATextLayer</p>
-<p>如果你想在一个图层里面显示文字，完全可以借助图层代理直接将字符串使用Core Graphics写入图层的内容(这就是UILabel的精髓)。如果越过寄宿于图层的视图，直接在图层上操作，那其实相当繁琐。你要为每一个显示文字的图层创建一个能像图层代理一样工作的类，还有逻辑上判断哪个图层需要显示哪个字符串，更别提还有记录不同的字体、颜色等一系列乱七八糟的东西。</p>
-<p>Core Animation提供了一个CALayer的子类CATextLayer，它以图层的形式包含了UILabel几乎所有的绘制特性，并且额外提供了一些新的特性。</p>
-<p>同样，CATextLayer也要比UILabel渲染的快的多。很少有人知道iOS6及之前的版本，UILabel其实是通过WebKit来实现绘制的，这样就造成了当有很多文字的时候就会有极大的性能压力。而CATextLayer使用了Core Text，并且渲染的非常快。</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CATextLayer</span> *textLayer = [<span class="built_in">CATextLayer</span> layer];</span><br><span class="line">textLayer<span class="variable">.frame</span> = view<span class="variable">.bounds</span>;</span><br><span class="line">[view<span class="variable">.layer</span> addSublayer:textLayer];</span><br><span class="line"></span><br><span class="line"><span class="comment">//set text attributes</span></span><br><span class="line">textLayer<span class="variable">.foregroundColor</span> = [<span class="built_in">UIColor</span> blackColor]<span class="variable">.CGColor</span>;</span><br><span class="line">textLayer<span class="variable">.alignmentMode</span> = K<span class="built_in">CAAlignmentJustified</span>;</span><br><span class="line">textLayer<span class="variable">.wrapped</span> = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//choose a font</span></span><br><span class="line"><span class="built_in">UIFont</span> *font = [<span class="built_in">UIFont</span> systemFontOfSize:<span class="number">15</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//set layer font</span></span><br><span class="line"><span class="built_in">CFStringRef</span> fontName = (__bridge <span class="built_in">CFStringRef</span>)font<span class="variable">.fontName</span>;</span><br><span class="line"><span class="built_in">CGStringRef</span> fontRef = <span class="built_in">CGFontCreateWithFontName</span>(fontName);</span><br><span class="line">textLayer<span class="variable">.font</span> = fontRef;</span><br><span class="line">textLayer<span class="variable">.fontSize</span> = font<span class="variable">.pointSize</span>;</span><br><span class="line"><span class="built_in">CGFontRelease</span>(fontRef);</span><br><span class="line"></span><br><span class="line">textLayer<span class="variable">.string</span> = <span class="string">@"sgladgka"</span>;</span><br></pre></td></tr></table></figure>
-<p>CATextLayer的font属性不是一个UIFont类型，而是一个CFTypeRef类型。这样可以根据你的具体需要来决定字体属性应该是用CGFontRef类型还是CTFontRef类型(Core Text字体)。同时字体大小也是用fontSize属性单独设置的，因为CTFontRef和CGFontRef并不像UIFont一样包含点大小。</p>
-<p>另外，CATextLayer和string属性并不是你想象的NSString类型，而是id类型。这样你既可以用NSString也可以用NSAttributedString来指定文本了(NSAttributedString并不是NSString的子类)。属性化字符串是iOS用来渲染字体风格的机制，它以特定的方式来决定指定范围内的字符串的原始信息，比如字体、颜色、字重、斜体等。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/01/12/hello-world/" class="article-date">
-  	<time datetime="2016-01-12T07:02:57.000Z" itemprop="datePublished">2016-01-12</time>
+  	<time datetime="2016-04-11T06:09:02.000Z" itemprop="datePublished">2016-04-11</time>
 </a>
     </div>
   
@@ -706,7 +337,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/12/hello-world/">Hello World</a>
+      <a class="article-title" href="/2016/04/11/iOS-Core-Animation——图层/">iOS Core Animation——图层</a>
     </h1>
   
 
@@ -715,24 +346,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start"><a href="#Quick_Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create_a_new_post"><a href="#Create_a_new_post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server"><a href="#Run_server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files"><a href="#Generate_static_files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites"><a href="#Deploy_to_remote_sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
+        <blockquote>
+<p>Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕上不同的可视内容，内容是被分解成独立的图层，存储在图层树的体系之中。于是这个树形成了<code>UIKit</code>以及iOS应用程序当中你所能在屏幕上看见的一切的基础。<br>
       
     </div>
     
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/主题/">主题</a></li></ul>
+	</div>
+
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/11/iOS-Core-Animation——图层/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -756,7 +387,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2016 John Doe
+    		&copy; 2016 John
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten

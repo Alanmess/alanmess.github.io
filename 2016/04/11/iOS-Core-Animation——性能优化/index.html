@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS Core Animation——性能优化 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Core Animation的性能优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS Core Animation——性能优化">
+<meta property="og:url" content="http://yoursite.com/2016/04/11/iOS-Core-Animation——性能优化/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Core Animation的性能优化">
+<meta property="og:updated_time" content="2016-04-11T06:26:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS Core Animation——性能优化">
+<meta name="twitter:description" content="Core Animation的性能优化">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="null" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">John</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>標籤</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>關於</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/主题/" style="font-size: 10px;">主题</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">John</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="null" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">John</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS-Core-Animation——性能优化" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/11/iOS-Core-Animation——性能优化/" class="article-date">
+  	<time datetime="2016-04-11T06:26:10.000Z" itemprop="datePublished">2016-04-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS Core Animation——性能优化
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/主题/">主题</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>Core Animation的性能优化<br><a id="more"></a></p>
+</blockquote>
+<h3 id="u4E00_u3001_u6027_u80FD_u8C03_u4F18"><a href="#u4E00_u3001_u6027_u80FD_u8C03_u4F18" class="headerlink" title="一、性能调优"></a>一、性能调优</h3><p><strong>CPU VS GPU</strong></p>
+<p>绘图和动画有两种处理方式：CPU(中央处理器，软件层面)、GPU(图形处理器，硬件层面)。</p>
+<p>GPU对高度并行浮点运算做了优化，所以对于图像处理，通常硬件会更快。所以尽可能把屏幕渲染工作交给硬件处理，但是GPU并没有无限制处理性能，一旦资源用完，性能就会下降。</p>
+<p>大多数动画性能优化都是关于智能利用GPU和CPU，使得它们不会超出负荷。</p>
+<p><strong>动画的舞台</strong></p>
+<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，而不是你的应用程序。这个进程就是所谓的渲染服务。在iOS5和之前的版本是SpringBoard进程(同时管理着iOS的主屏)。iOS6之后的版本中叫做BackBoard。</p>
+<p>当运行一段动画时候，这个过程会被四个分离的阶段被打破：</p>
+<ul>
+<li>布局 - 这是准备你的视图/图层的层级关系，以及设置图层属性(位置，背景色，边框等)的阶段</li>
+<li>显示 - 这是图层的寄宿图片被绘制的阶段。绘制有可能涉及你的<code>-drawRect</code>和<code>-drawLayer:inContext:</code>方法的调用路径</li>
+<li>准备 - 这是Core Animation准备发送动画数据到渲染服务的阶段。这同时也是Core Animation将要执行一些别的事务例如解码动画过程中将要显示的图片的时间点</li>
+<li>提交 - 这是最后的阶段，Core Animation打包所有图层和动画属性，然后通过IPC(内部处理通信)发送到渲染服务进行显示</li>
+</ul>
+<p>但是这些仅仅阶段仅仅发生在你的应用程序之内，在动画在屏幕上显示之前仍然有更多的工作。一旦打包的图层和动画到达渲染服务进程，他们会被反序列化来形成另一个叫做<em>渲染树</em>的图层树（在第一章“图层树”中提到过）。使用这个树状结构，渲染服务对动画的每一帧做出如下工作：</p>
+<ul>
+<li>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化的三角形）来执行渲染</li>
+<li>在屏幕上渲染可见的三角形</li>
+</ul>
+<p>所以一共有六个阶段；最后两个阶段在动画过程中不停地重复。前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。Core Animation框架在内部处理剩下的事务，你也控制不了它。</p>
+<p><strong>GPU相关的操作</strong></p>
+<p>有一些事情会降低（基于GPU）图层绘制，比如：</p>
+<ul>
+<li>太多的几何结构 - 这发生在需要太多的三角板来做变换，以应对处理器的栅格化的时候。现代iOS设备的图形芯片可以处理几百万个三角板，所以在Core Animation中几何结构并不是GPU的瓶颈所在。但由于图层在显示之前通过IPC发送到渲染服务器的时候（图层实际上是由很多小物体组成的特别重量级的对象），太多的图层就会引起CPU的瓶颈。这就限制了一次展示的图层个数（见本章后续“CPU相关操作”）。</li>
+<li>重绘 - 主要由重叠的半透明图层引起。GPU的<em>填充比率</em>（用颜色填充像素的比率）是有限的，所以需要避免<em>重绘</em>（每一帧用相同的像素填充多次）的发生。在现代iOS设备上，GPU都会应对重绘；即使是iPhone 3GS都可以处理高达2.5的重绘比率，并任然保持60帧率的渲染（这意味着你可以绘制一个半的整屏的冗余信息，而不影响性能），并且新设备可以处理更多。</li>
+<li>离屏绘制 - 这发生在当不能直接在屏幕上绘制，并且必须绘制到离屏图片的上下文中的时候。离屏绘制发生在基于CPU或者是GPU的渲染，或者是为离屏图片分配额外内存，以及切换绘制上下文，这些都会降低GPU性能。对于特定图层效果的使用，比如圆角，图层遮罩，阴影或者是图层光栅化都会强制Core Animation提前渲染图层的离屏绘制。但这不意味着你需要避免使用这些效果，只是要明白这会带来性能的负面影响。</li>
+<li>过大的图片 - 如果视图绘制超出GPU支持的2048x2048或者4096x4096尺寸的纹理，就必须要用CPU在图层每次显示之前对图片预处理，同样也会降低性能。</li>
+</ul>
+<p><strong>CPU相关的操作</strong></p>
+<p>以下CPU的操作都会延迟动画的开始时间：</p>
+<ul>
+<li>布局计算 - 如果你的视图层级过于复杂，当视图呈现或者修改的时候，计算图层帧率就会消耗一部分时间。特别是使用iOS6的自动布局机制尤为明显，它应该是比老版的自动调整逻辑加强了CPU的工作。</li>
+<li>视图懒加载 - iOS只会当视图控制器的视图显示到屏幕上时才会加载它。这对内存使用和程序启动时间很有好处，但是当呈现到屏幕上之前，按下按钮导致的许多工作都会不能被及时响应。比如控制器从数据库中获取数据，或者视图从一个nib文件中加载，或者涉及IO的图片显示（见后续“IO相关操作”），都会比CPU正常操作慢得多。</li>
+<li>Core Graphics绘制 - 如果对视图实现了<code>-drawRect:</code>方法，或者<code>CALayerDelegate</code>的<code>-drawLayer:inContext:</code>方法，那么在绘制任何东西之前都会产生一个巨大的性能开销。为了支持对图层内容的任意绘制，Core Animation必须创建一个内存中等大小的寄宿图片。然后一旦绘制结束之后，必须把图片数据通过IPC传到渲染服务器。在此基础上，Core Graphics绘制就会变得十分缓慢，所以在一个对性能十分挑剔的场景下这样做十分不好。</li>
+<li>解压图片 - PNG或者JPEG压缩之后的图片文件会比同质量的位图小得多。但是在图片绘制到屏幕上之前，必须把它扩展成完整的未解压的尺寸（通常等同于图片宽 x 长 x 4个字节）。为了节省内存，iOS通常直到真正绘制的时候才去解码图片（14章“图片IO”会更详细讨论）。根据你加载图片的方式，第一次对图层内容赋值的时候（直接或者间接使用<code>UIImageView</code>）或者把它绘制到Core Graphics中，都需要对它解压，这样的话，对于一个较大的图片，都会占用一定的时间。</li>
+</ul>
+<p><strong>IO相关操作</strong></p>
+<p>上下文中的IO（输入/输出）指的是例如闪存或者网络接口的硬件访问。一些动画可能需要从山村（甚至是远程URL）来加载。一个典型的例子就是两个视图控制器之间的过渡效果，这就需要从一个nib文件或者是它的内容中懒加载，或者一个旋转的图片，可能在内存中尺寸太大，需要动态滚动来加载。</p>
+<p>IO比内存访问更慢，所以如果动画涉及到IO，就是一个大问题。总的来说，这就需要使用聪敏但尴尬的技术，也就是多线程，缓存和投机加载（提前加载当前不需要的资源，但是之后可能需要用到）。</p>
+<h3 id="u4E8C_u3001_u9AD8_u6548_u7ED8_u56FE"><a href="#u4E8C_u3001_u9AD8_u6548_u7ED8_u56FE" class="headerlink" title="二、高效绘图"></a>二、高效绘图</h3><h5 id="1__u8F6F_u4EF6_u7ED8_u56FE"><a href="#1__u8F6F_u4EF6_u7ED8_u56FE" class="headerlink" title="1 软件绘图"></a>1 软件绘图</h5><p>iOS中，软件绘图通常是由Core Graphics框架来完成。但是在一些必要的情况下，相比Core Animation和OpenGL，Core Graphics要慢了不少。</p>
+<p>软件绘图不仅效率低，还会消耗可观的内存。<code>CALayer</code>只需要一些与自己相关的内存：只有它的寄宿图会消耗一定的内存空间。即使直接赋给<code>contents</code>属性一张图片，也不需要增加额外的照片存储大小。如果相同一张图片被多个图层作为contents属性，那么他们将会共用同一块内存，而不是复制内存块。</p>
+<p>但是一旦你实现了<code>CALayerDelegate</code>协议中的<code>-drawLayer:inContext:</code>方法或者<code>UIView</code>中的<code>-drawRect:</code>方法（其实就是前者的包装方法），图层就创建了一个绘制上下文，这个上下文需要的大小的内存可从这个算式得出：图层宽*图层高*4字节，宽高的单位均为像素。对于一个在Retina iPad上的全屏图层来说，这个内存量就是 2048*1526*4字节，相当于12MB内存，图层每次重绘的时候都需要重新抹掉内存然后重新分配。</p>
+<h5 id="2__u77E2_u91CF_u56FE_u5F62"><a href="#2__u77E2_u91CF_u56FE_u5F62" class="headerlink" title="2 矢量图形"></a>2 矢量图形</h5><p>我们用Core Graphics来绘图的一个通常原因就是只是用图片或是图层效果不能轻易地绘制出矢量图形。矢量绘图包含一下这些：</p>
+<ul>
+<li>任意多边形（不仅仅是一个矩形）</li>
+<li>斜线或曲线</li>
+<li>文本</li>
+<li>渐变</li>
+</ul>
+<p>用Core Graphics做一个简单的素描，这样实现的问题在于，我们画得越多，程序就会越慢。因为每次移动手指的时候都会重绘整个贝塞尔路径（<code>UIBezierPath</code>），随着路径越来越复杂，每次重绘的工作就会增加，直接导致了帧数的下降。看来我们需要一个更好的方法了。</p>
+<p>Core Animation为这些图形类型的绘制提供了专门的类，并给他们提供硬件支持。<code>CAShapeLayer</code>可以绘制多边形，直线和曲线。<code>CATextLayer</code>可以绘制文本…这些总体上都比Core Graphics更快，同时也避免了创造一个寄宿图。</p>
+<h5 id="3__u810F_u77E9_u5F62"><a href="#3__u810F_u77E9_u5F62" class="headerlink" title="3 脏矩形"></a>3 脏矩形</h5><p>为了减少不必要的绘制，Mac OS和iOS设备将会把屏幕区分为需要重绘的区域和不需要重绘的区域。那些需要重绘的部分被称作<em>脏区域</em>。在实际应用中，鉴于非矩形区域边界裁剪和混合的复杂性，通常会区分出包含指定视图的矩形位置，而这个位置就是<em>脏矩形</em>。</p>
+<p>当你检测到指定视图或图层的指定部分需要被重绘，你直接调用<code>-setNeedsDisplayInRect:</code>来标记它，然后将影响到的矩形作为参数传入。这样就会在一次视图刷新时调用视图的<code>-drawRect:</code>。</p>
+<p>传入<code>-drawLayer:inContext:</code>的<code>CGContext</code>参数会自动被裁切以适应对应的矩形。为了确定矩形的尺寸大小，你可以用<code>CGContextGetClipBoundingBox()</code>方法来从上下文获得大小。调用<code>-drawRect()</code>会更简单，因为<code>CGRect</code>会作为参数直接传入。</p>
+<h5 id="4__u5F02_u6B65_u7ED8_u5236"><a href="#4__u5F02_u6B65_u7ED8_u5236" class="headerlink" title="4 异步绘制"></a>4 异步绘制</h5><p>UIKit的单线程天性意味着寄宿图通常要在主线程上更新，这意味着绘制会打断用户交互，甚至让整个app看起来处于无响应状态。</p>
+<p>针对这个问题，有一些方法可以用到：一些情况下，我们可以推测性地提前在另外一个线程上绘制内容，然后将由此绘出的图片直接设置为图层的内容。这实现起来可能不是很方便，但是在特定的情况下是可行的。Core Animation提供了一些选择：<code>CATiledLayer</code>和<code>drawsAsynchronously</code>属性</p>
+<p><strong>CATiledLayer</strong></p>
+<p>除了将图层再次分割成独立更新的小块(类似于脏矩形自动更新的概念)，<code>CATiledLayer</code>还有一个有趣的特性：在多个线程中为每个小块同时调用<code>-drawLayer:inContext:</code>方法。这就避免了阻塞用户交互而且能够利用多核来更快的绘制。</p>
+<p><strong>drawsAsynchronously</strong></p>
+<p><code>drawsAsynchronously</code>属性对传入<code>-drawLayer:inContext:</code>的CGContext进行改动，允许CGContext延缓绘制命令的执行以至于不阻塞用户交互。</p>
+<p>它与<code>CATiledLayer</code>使用的异步绘制并不相同。它自己的<code>-drawLayer:inContext:</code>方法只会在主线程调用，但是CGContext并不等待每个绘制命令的结束。相反的，它会将命令加入队列，当方法返回时，在后台线程逐个执行真正的绘制。</p>
+<p>根据苹果的说法，这个特性在需要频繁重绘的视图上效果最好，对那些只绘制一次或很少重绘的图层内容来说没什么太大的帮助。</p>
+<h3 id="u4E09_u3001_u56FE_u50CFIO"><a href="#u4E09_u3001_u56FE_u50CFIO" class="headerlink" title="三、图像IO"></a>三、图像IO</h3><h5 id="1__u52A0_u8F7D_u548C_u6F5C_u4F0F"><a href="#1__u52A0_u8F7D_u548C_u6F5C_u4F0F" class="headerlink" title="1 加载和潜伏"></a>1 加载和潜伏</h5><p>绘图实际消耗的实际通常并不是影响性能的因素。图片消耗很大一部分内存，而且不太可能把需要显示的图片都保留在内存中，所以需要在应用运行的时候周期性地加载和卸载图片。</p>
+<p>图片文件加载的速度被CPU和IO(输入/输出)同时影响。iOS设备中的闪存已经比传统硬盘快很多了，但仍然比RAM慢将近200倍左右，这就需要很小心地管理加载，来避免延迟。</p>
+<p>按下按钮和按钮响应事件之间最大的延迟大概是200ms，这比动画每一帧切换的16ms小得多。你可以在程序首次启动的时候加载图片，但是如果20秒内无法启动程序的话，iOS检测计时器就会终止你的应用。</p>
+<p>有些时候，提前加载所有的东西并不明智。比如说包含上千张图片的图片传送带：用户希望能够能够平滑快速翻动图片，所以就不可能提前预加载所有图片；那样会消耗太多的时间和内存。</p>
+<p>有时候图片也需要从远程网络连接中下载，这将会比从磁盘加载要消耗更多的时间，甚至可能由于连接问题而加载失败（在几秒钟尝试之后）。你不能够在主线程中加载网络造成等待，所以需要后台线程。</p>
+<p><strong>线程加载</strong></p>
+<p>对于大图，加载会消耗很长时间，造成滑动的不流畅。滑动动画会在主线程run loop中更新，所以会有更多运行在渲染服务进程中CPU相关的性能问题。</p>
+<p>为了在后台线程加载图片，我们可以使用GCD或者NSOperationQueue创建自定义线程，或者使用CATiledLayer。为了从远程网络加载图片，我们可以使用异步的NSURLConnection。</p>
+<p><strong>GCD和<code>NSOperationQueue</code></strong></p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dispatch_async<span class="list">(<span class="keyword">dispatch_global_queue</span><span class="list">(<span class="keyword">DISPATCH_QUEUE_PRIORITY_LOW</span>, <span class="number">0</span>)</span>, ^&#123;</span><br><span class="line">  NSInteger index = index.row<span class="comment">;</span></span><br><span class="line">  NSString <span class="variable">*imagePath = self.imagePaths[index];</span><br><span class="line">  UIImage *</span>imae = [UIImage imageWithContentsOfFile<span class="keyword">:imagePath</span>]<span class="comment">;</span></span><br><span class="line">  dispatch_async<span class="list">(<span class="keyword">dispatch_get_main_queue</span><span class="list">()</span>, ^&#123;</span><br><span class="line">    if<span class="list">(<span class="keyword">index</span> == cell.tag)</span> &#123;</span><br><span class="line">  	    imageView.image = image<span class="comment">;</span></span><br><span class="line">	&#125;</span><br><span class="line">  &#125;)</span></span><br><span class="line">&#125;)</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>加载图片数据到内存中只是问题的第一部分。</p>
+<p><strong>延迟解压</strong></p>
+<p>一旦图片文件被加载就必须要进行解码，解码过程是一个相当复杂的任务，需要消耗非常长的时间。解码后的图片将同样使用相当大的内存。</p>
+<p>用于加载的CPU时间相对于解码来说根据图片格式而不同。对于PNG图片来说，加载会比JPEG更长，因为文件可能更大，但是解码会相对较快，而且XCode会把PNG图片进行解码优化之后引入工程。JPEG图片更小，加载更快，但是解压的步骤需要消耗更长的时间，因为JPEG解压算法比基于zip的PNG算法更加复杂。</p>
+<p>当加载图片的时候，iOS通常会延迟解压图片的时间，直到加载到内存之后。这就会在准备绘制图片的时候影响性能，因为需要在绘制之前进行解压(通常是消耗时间的问题所在)。</p>
+<blockquote>
+<p>最简单的方法就是使用UIImage的<code>+imageNamed:</code>方法避免延时加载。不像<code>+imageWithContentsOfFile:</code>(和其他别的UIImage加载方法)，这个方法会在加载图片之后立刻进行解压。问题在于<code>+imageNamed:</code>只对从应用资源束中的图片有效，所以对用户生成的图片内容或者是下载的图片就没法使用了。</p>
+</blockquote>
+<p>另一种立刻加载图片的方法就是把它设置成图层内容，或者是UIImageView的image属性。不幸的是，这又需要在主线程执行，所以不会对性能有所提升。</p>
+<p>第三种方式就是绕过UIKit，像下面这样使用ImageIO框架：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSInteger index = index.row;&#10;NSURL *imageURL = [NSURL fileURLWithPath:self.imagePaths[index]];&#10;NSDictionary *options = @&#123;(__brdge id)kCGImageSourceShouldCache:@YES&#125;;&#10;CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)imageURL, NULL);&#10;CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source,0,(__bridge CFDictionaryRef)options);&#10;UIImage *image = [UIImage imageWithCGImage:imageRef];&#10;CGImageRelease(imageRef);&#10;CFRelease(source);</span><br></pre></td></tr></table></figure>
+<p>这样就可以使用<code>kCGImagSourceShouldCache</code>来创建图片，强制图片立刻解压，然后在图片的生命周期保留解压后的版本。</p>
+<p>最后一种方式是使用UIKit加载图片，但是立刻绘制到CGContext中去。图片必须要在绘制之前解压，所以就强制了解压的及时性。这样的好处在于绘制图片可以在后台线程(例如加载本身)执行，而不会阻塞UI。</p>
+<p>有两种方式可以为强制解压提前渲染图片：</p>
+<ul>
+<li>将图片的一个像素绘制成一个像素大小的CGContext。这样仍然会解压整张图片，但是绘制本身并没有消耗任何时间。这样的好处在于加载的图片并不会在特定的设备上为绘制做优化，所以可以在任何时间点绘制出来。同样iOS也就可以丢弃解压后的图片来节省内存了。</li>
+<li>将整张图片绘制到CGContext中，丢弃原始的图片，并且用一个从上下文内容中新的图片来代替。这样比绘制单一像素那样需要更加复杂的计算，但是因此产生的图片将会为绘制做优化，而且由于原始压缩图片被抛弃了，iOS就不能够随时丢弃任何解压后的图片来节省内存了。</li>
+</ul>
+<p>需要注意的是苹果特别推荐了不要使用这些诡计来绕过标准图片解压逻辑(所以也是他们选择默认处理方式的原因)，但是如果你使用了很多大图来构建应用，那如果想提升性能，就只能和系统博弈了。</p>
+<p>如果不使用<code>+imageNamed:</code>，那么把整张图片绘制到<code>CGContext</code>可能是最佳的方式了。尽管你可能认为多余的绘制相较别的解压技术而言性能不是很高，但是新创建的图片（在特定的设备上做过优化）可能比原始图片绘制的更快。</p>
+<p>​    同样，如果想显示图片到比原始尺寸小的容器中，那么一次性在后台线程重新绘制到正确的尺寸会比每次显示的时候都做缩放会更有效（尽管在这个例子中我们加载的图片呈现正确的尺寸，所以不需要多余的优化）。</p>
+<p>​        如果修改了<code>-collectionView:cellForItemAtIndexPath:</code>方法来重绘图片（清单14.3），你会发现滑动更加平滑。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">diapatch_async<span class="list">(<span class="keyword">dispatch_get_global_queue</span><span class="list">(<span class="keyword">DISPATCH_QUEUE_PRIORITY_LOW</span>, <span class="number">0</span>)</span>, ^&#123;</span><br><span class="line">  NSInteger index = indexPath.row<span class="comment">;</span></span><br><span class="line">  NSString <span class="variable">*imagePath = self.imagePaths[index];</span><br><span class="line">  UIImage *</span>image = [UIImage imageWithContentsOfFile<span class="keyword">:imagePath</span>]<span class="comment">;</span></span><br><span class="line">  UIGraphicsBeginImageContextWithOptions<span class="list">(<span class="keyword">imageView</span>.bounds.size, YES, <span class="number">0</span>)</span><span class="comment">;</span></span><br><span class="line">  [image drawInRect<span class="keyword">:imageView</span>.bounds]<span class="comment">;</span></span><br><span class="line">&#125;)</span></span><br></pre></td></tr></table></figure>
+<p>#####CATiledLayer</p>
+<p><code>CATiledLayer</code>可以用来异步加载和显示大型图片，而不阻塞用户输入。但是我们同样可以使用<code>CATiledLayer</code>在<code>UICollectionView</code>中为每个表格创建分离的<code>CATiledLayer</code>实例加载传动器图片，每个表格仅使用一个图层。</p>
+<p>这样使用<code>CATiledLayer</code>有几个弊端：</p>
+<ul>
+<li><code>CATiledLayer</code>的队列和缓存算法没有暴露出来，所以我们只能祈祷它能匹配我们的需求</li>
+<li><code>CATiledLayer</code>需要我们每次重绘图片到<code>CGContext</code>中，即使它已经解压缩，而且和我们单元格尺寸一样(因此可以直接用作图层内容，而不需要重绘)</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UICollectionViewCell</span> *)collectionView:(<span class="built_in">UICollectionView</span> *)collectionView cellForItemAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//dequeue cell</span></span><br><span class="line">    <span class="built_in">UICollectionViewCell</span> *cell = [collectionView dequeueReusableCellWithReuseIdentifier:<span class="string">@"Cell"</span> forIndexPath:indexPath];</span><br><span class="line">    <span class="comment">//add the tiled layer</span></span><br><span class="line">    <span class="built_in">CATiledLayer</span> *tileLayer = [cell<span class="variable">.contentView</span><span class="variable">.layer</span><span class="variable">.sublayers</span> lastObject];</span><br><span class="line">    <span class="keyword">if</span> (!tileLayer) &#123;</span><br><span class="line">        tileLayer = [<span class="built_in">CATiledLayer</span> layer];</span><br><span class="line">        tileLayer<span class="variable">.frame</span> = cell<span class="variable">.bounds</span>;</span><br><span class="line">        tileLayer<span class="variable">.contentsScale</span> = [<span class="built_in">UIScreen</span> mainScreen]<span class="variable">.scale</span>;</span><br><span class="line">        tileLayer<span class="variable">.tileSize</span> = <span class="built_in">CGSizeMake</span>(cell<span class="variable">.bounds</span><span class="variable">.size</span><span class="variable">.width</span> * [<span class="built_in">UIScreen</span> mainScreen]<span class="variable">.scale</span>, cell<span class="variable">.bounds</span><span class="variable">.size</span><span class="variable">.height</span> * [<span class="built_in">UIScreen</span> mainScreen]<span class="variable">.scale</span>);</span><br><span class="line">        tileLayer<span class="variable">.delegate</span> = <span class="keyword">self</span>;</span><br><span class="line">        [tileLayer setValue:@(indexPath<span class="variable">.row</span>) forKey:<span class="string">@"index"</span>];</span><br><span class="line">        [cell<span class="variable">.contentView</span><span class="variable">.layer</span> addSublayer:tileLayer];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//tag the layer with the correct index and reload</span></span><br><span class="line">    tileLayer<span class="variable">.contents</span> = <span class="literal">nil</span>;</span><br><span class="line">    [tileLayer setValue:@(indexPath<span class="variable">.row</span>) forKey:<span class="string">@"index"</span>];</span><br><span class="line">    [tileLayer setNeedsDisplay];</span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)drawLayer:(<span class="built_in">CATiledLayer</span> *)layer inContext:(<span class="built_in">CGContextRef</span>)ctx</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//get image index</span></span><br><span class="line">    <span class="built_in">NSInteger</span> index = [[layer valueForKey:<span class="string">@"index"</span>] integerValue];</span><br><span class="line">    <span class="comment">//load tile image</span></span><br><span class="line">    <span class="built_in">NSString</span> *imagePath = <span class="keyword">self</span><span class="variable">.imagePaths</span>[index];</span><br><span class="line">    <span class="built_in">UIImage</span> *tileImage = [<span class="built_in">UIImage</span> imageWithContentsOfFile:imagePath];</span><br><span class="line">    <span class="comment">//calculate image rect</span></span><br><span class="line">    <span class="built_in">CGFloat</span> aspectRatio = tileImage<span class="variable">.size</span><span class="variable">.height</span> / tileImage<span class="variable">.size</span><span class="variable">.width</span>;</span><br><span class="line">    <span class="built_in">CGRect</span> imageRect = <span class="built_in">CGRectZero</span>;</span><br><span class="line">    imageRect<span class="variable">.size</span><span class="variable">.width</span> = layer<span class="variable">.bounds</span><span class="variable">.size</span><span class="variable">.width</span>;</span><br><span class="line">    imageRect<span class="variable">.size</span><span class="variable">.height</span> = layer<span class="variable">.bounds</span><span class="variable">.size</span><span class="variable">.height</span> * aspectRatio;</span><br><span class="line">    imageRect<span class="variable">.origin</span><span class="variable">.y</span> = (layer<span class="variable">.bounds</span><span class="variable">.size</span><span class="variable">.height</span> - imageRect<span class="variable">.size</span><span class="variable">.height</span>)/<span class="number">2</span>;</span><br><span class="line">    <span class="comment">//draw tile</span></span><br><span class="line">    <span class="built_in">UIGraphicsPushContext</span>(ctx);</span><br><span class="line">    [tileImage drawInRect:imageRect];</span><br><span class="line">    <span class="built_in">UIGraphicsPopContext</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要解释几点：</p>
+<ul>
+<li><code>CATiledLayer</code>的<code>titleSize</code>属性单位是像素，而不是点，所以为了保证和表格尺寸一致，需要乘以屏幕比例因子。</li>
+<li>在<code>-drawLayer:inContext:</code>方法中，我们需要知道图层属于哪一个indexPath以加载正确的图片。这里我们利用了CALayer的KVC来存储和检索任意的值，将图层和索引打标签。</li>
+</ul>
+<p>但是用<code>CATiledLayer</code>加载图片到屏幕上后有一个明显的淡入。</p>
+<p>我们可以调整<code>CATiledLayer</code>的<code>fadeDuration</code>属性来调整淡入的速度，或者直接将整个渐变移除，但是这并没有根本性地去除问题：在图片加载到准备绘制的时候总会有一个延迟，这将会导致滑动时候新图片的跳入。这并不是<code>CATiledLayer</code>的问题，使用GCD的版本也有这个问题。</p>
+<p>即使使用上述我们讨论的所有加载图片和缓存的技术，有时候仍然会发现实时加载大图还是有问题。就和13章中提到的那样，iPad上一整个视网膜屏图片分辨率达到了2048x1536，而且会消耗12MB的RAM（未压缩）。第三代iPad的硬件并不能支持1/60秒的帧率加载，解压和显示这种图片。即使用后台线程加载来避免动画卡顿，仍然解决不了问题。</p>
+<p>我们可以在加载的同时显示一个占位图片，但这并没有根本解决问题，我们可以做到更好。</p>
+<p><strong>分辨率交换</strong></p>
+<p>视网膜分辨率（根据苹果市场定义）代表了人的肉眼在正常视角距离能够分辨的最小像素尺寸。但是这只能应用于静态像素。当观察一个移动图片时，你的眼睛就会对细节不敏感，于是一个低分辨率的图片和视网膜质量的图片没什么区别了。</p>
+<p>如果需要快速加载和显示移动大图，简单的办法就是欺骗人眼，在移动传送器的时候显示一个小图（或者低分辨率），然后当停止的时候再换成大图。这意味着我们需要对每张图片存储两份不同分辨率的副本，但是幸运的是，由于需要同时支持Retina和非Retina设备，本来这就是普遍要做到的。</p>
+<p>如果从远程源或者用户的相册加载没有可用的低分辨率版本图片，那就可以动态将大图绘制到较小的<code>CGContext</code>，然后存储到某处以备复用。</p>
+<p>为了做到图片交换，我们需要利用<code>UIScrollView</code>的一些实现<code>UIScrollViewDelegate</code>协议的委托方法（和其他类似于<code>UITableView</code>和<code>UICollectionView</code>基于滚动视图的控件一样）：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="pp">- <span class="params">(void)</span>scrollViewDidEndDragging:<span class="params">(<span class="variable">UIScrollView</span> *)</span>scrollView willDecelerate:<span class="params">(<span class="variable">BOOL</span>)</span>decelerate;</span><br><span class="line">- <span class="params">(void)</span>scrollViewDidEndDecelerating:<span class="params">(<span class="variable">UIScrollView</span> *)</span>scrollView;</span></span><br></pre></td></tr></table></figure>
+<p>你可以使用这几个方法来检测传送器是否停止滚动，然后加载高分辨率的图片。只要高分辨率图片和低分辨率图片尺寸颜色保持一致，你会很难察觉到替换的过程（确保在同一台机器使用相同的图像程序或者脚本生成这些图片）。</p>
+<h5 id="2__u7F13_u5B58"><a href="#2__u7F13_u5B58" class="headerlink" title="2 缓存"></a>2 缓存</h5><p>如果有很多张图片要显示，最好不要提前把所有都加载进来，而是应该当移出屏幕之后立刻销毁。通过选择性的缓存，你就可以避免来回滚动时图片重复性的加载了。</p>
+<p>缓存其实很简单：就是存储昂贵计算后的结果（或者是从闪存或者网络加载的文件）在内存中，以便后续使用，这样访问起来很快。问题在于缓存本质上是一个权衡过程 - 为了提升性能而消耗了内存，但是由于内存是一个非常宝贵的资源，所以不能把所有东西都做缓存。</p>
+<p>何时将何物做缓存（做多久）并不总是很明显。幸运的是，大多情况下，iOS都为我们做好了图片的缓存。</p>
+<p><strong><code>+imageNamed:</code>方法</strong></p>
+<p>之前我们提到使用<code>[UIImage imageNamed:]</code>加载图片有个好处在于可以立刻解压图片而不用等到绘制的时候。但是<code>[UIImage imageNamed:]</code>方法有另一个非常显著的好处：它在内存中自动缓存了解压后的图片，即使你自己没有保留对它的任何引用。</p>
+<p>但是<code>[UIImage imageNamed:]</code>并不适用任何情况。它为用户界面做了优化，但是并不是对应用程序需要显示的所有类型的图片都适用。有些时候你还是要实现自己的缓存机制，原因如下：</p>
+<ul>
+<li><code>[UIImage imageNamed:]</code>方法仅仅适用于在应用程序资源束目录下的图片，但是大多数应用的许多图片都要从网络或者是用户的相机中获取，所以该方法就没用了</li>
+<li><code>[UIImage imageNamed:]</code>缓存用来存储应用界面的图片(按钮，背景等)。如果对照片这种大图也用这种缓存，那么iOS系统就很可能会移除这些图片来节省内存。那么在切换页面时性能就会下降，因为这些图片都需要重新加载。对传送器的图片使用一个单独的缓存机制就可以把它和应用图片的生命周期解耦。</li>
+<li><code>[UIImage imageNamed:]</code>缓存机制并不是公开的，所以你不能很好地控制它。例如，你没法做到检测图片是否在加载之前就做了缓存，不能够设置缓存大小，当图片没用的时候也不能把它从缓存中移除。</li>
+</ul>
+<p><strong>自定义缓存</strong></p>
+<p>构建一个所谓的缓存系统非常困难。菲尔 卡尔顿曾经说过：“在计算机科学中只有两件难事：缓存和命名”。</p>
+<p>如果要写自己的图片缓存的话，那该如何实现呢？让我们来看看要涉及哪些方面：</p>
+<ul>
+<li>选择一个合适的缓存键——缓存键用来做图片的唯一标识。如果实时创建图片，通常不太好生成一个字符串来区分别的图片。在我们的图片传送带例子中就很简单，我们可以用图片的文件名或者表格索引。</li>
+<li>提前缓存——如果生成和加载数据的代价很大，你可能想当第一次需要用到的时候再去加载和缓存。提前加载的逻辑是应用内在就有的，但是在我们的例子中，这也非常好实现，因为对于一个给定的位置和滚动方向，我们就可以精确地判断出哪一张图片将会出现。</li>
+<li>缓存失效——如果图片文件发生了变换，怎样才能通知到缓存更新呢？这个是非常困难的问题，但是幸运的是当从程序资源加载静态图片的时候并不需要考虑这些。对用户提供的图片来说(可能会被修改或者覆盖)，一个比较好的方式就是当图片缓存的时候打上一个时间戳以便当文件更新的时候作比较。</li>
+<li>缓存回收——当内存不够时，如何判断哪些缓存需要清空呢？这就需要你写一个合适的算法了。幸运的是，对缓存回收的问题，苹果提供了一个叫做<code>NSCache</code>通用的解决方案。</li>
+</ul>
+<p><strong>NSCache</strong></p>
+<p><code>NSCache</code>和<code>NSDictionary</code>类似。你可以通过<code>-setObject:forKey:</code>和<code>-object:forKey:</code>方法分别来插入，检索。和字典不同的是，<code>NSCache</code>在系统低内存的时候自动丢弃存储的对象。</p>
+<p><code>NSCache</code>用来判断何时丢弃对象的算法并没有在文档中给出，但是你可以使用<code>-setCountLimit:</code>方法设置缓存大小，以及<code>-setObject:forKey:cost:</code>来对每个存储的对象指定消耗的值来提供一些暗示。</p>
+<p>指定消耗数值可以用来指定相对的重建成本。如果对大图指定一个大的消耗值，那么缓存就知道这些物体的存储更加昂贵，于是当有大的性能问题的时候才会丢弃这些物体。你也可以用<code>-setTotalCostLimit:</code>方法来指定全体缓存的尺寸。</p>
+<p><code>NSCache</code>是一个普遍的缓存解决方案，我们创建一个比传送器案例更好的自定义的缓存类。（例如，我们可以基于不同的缓存图片索引和当前中间索引来判断哪些图片需要首先被释放）。但是<code>NSCache</code>对我们当前的缓存需求来说已经足够了；没必要过早做优化。</p>
+<p>使用图片缓存和提前加载的实现来扩展之前的传送器案例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (UIImage *)loadImageAtIndex:(NSUInteger)index&#10;&#123;&#10;    //set up cache&#10;    static NSCache *cache = nil;&#10;    if (!cache) &#123;&#10;        cache = [[NSCache alloc] init];&#10;    &#125;&#10;    //if already cached, return immediately&#10;    UIImage *image = [cache objectForKey:@(index)];&#10;    if (image) &#123;&#10;        return [image isKindOfClass:[NSNull class]]? nil: image;&#10;    &#125;&#10;    //set placeholder to avoid reloading image multiple times&#10;    [cache setObject:[NSNull null] forKey:@(index)];&#10;    //switch to background thread&#10;    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^&#123;&#10;        //load image&#10;        NSString *imagePath = self.imagePaths[index];&#10;        UIImage *image = [UIImage imageWithContentsOfFile:imagePath];&#10;        //redraw image using device context&#10;        UIGraphicsBeginImageContextWithOptions(image.size, YES, 0);&#10;        [image drawAtPoint:CGPointZero];&#10;        image = UIGraphicsGetImageFromCurrentImageContext();&#10;        UIGraphicsEndImageContext();&#10;        //set image for correct image view&#10;        dispatch_async(dispatch_get_main_queue(), ^&#123; //cache the image&#10;            [cache setObject:image forKey:@(index)];&#10;            //display the image&#10;            NSIndexPath *indexPath = [NSIndexPath indexPathForItem: index inSection:0]; &#10;          UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];&#10;            UIImageView *imageView = [cell.contentView.subviews lastObject];&#10;            imageView.image = image;&#10;        &#125;);&#10;    &#125;);&#10;    //not loaded yet&#10;    return nil;&#10;&#125;&#10;&#10;- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath&#10;&#123;&#10;    //dequeue cell&#10;    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@&#34;Cell&#34; forIndexPath:indexPath];&#10;    //add image view&#10;    UIImageView *imageView = [cell.contentView.subviews lastObject];&#10;    if (!imageView) &#123;&#10;        imageView = [[UIImageView alloc] initWithFrame:cell.contentView.bounds];&#10;        imageView.contentMode = UIViewContentModeScaleAspectFit;&#10;        [cell.contentView addSubview:imageView];&#10;    &#125;&#10;    //set or load image for this index&#10;    imageView.image = [self loadImageAtIndex:indexPath.item];&#10;    //preload image for previous and next index&#10;    if (indexPath.item &#60; [self.imagePaths count] - 1) &#123;&#10;        [self loadImageAtIndex:indexPath.item + 1]; &#125;&#10;    if (indexPath.item &#62; 0) &#123;&#10;        [self loadImageAtIndex:indexPath.item - 1]; &#125;&#10;    return cell;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3__u6587_u4EF6_u683C_u5F0F"><a href="#3__u6587_u4EF6_u683C_u5F0F" class="headerlink" title="3 文件格式"></a>3 文件格式</h5><p>图片加载性能取决于加载大图的时间和解压小图时间的权衡。</p>
+<p> PNG图片使用的无损压缩算法可以比使用JPEG的图片做到更快地解压，但是由于闪存访问的原因，这些加载的时间并没有什么区别。</p>
+<p>PNG和JPEG压缩算法作用于两种不同的图片类型：JPEG对于噪点大的图片效果很好；但是PNG更适合于扁平颜色，锋利的线条或者一些渐变色的图片。</p>
+<p><strong>混合图片</strong></p>
+<p>对于包含透明的图片来说，最好是使用压缩透明通道的PNG图片和压缩RGB部分的JPEG图片混合起来加载。这就对任何格式都适用了，而且无论从质量还是文件尺寸还是加载性能来说都和PNG和JPEG的图片相近。相关分别加载颜色和遮罩图片并在运行时合成的代码如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//load color image&#10;    UIImage *image = [UIImage imageNamed:@&#34;Snowman.jpg&#34;];&#10;    //load mask image&#10;    UIImage *mask = [UIImage imageNamed:@&#34;SnowmanMask.png&#34;];&#10;    //convert mask to correct format&#10;    CGColorSpaceRef graySpace = CGColorSpaceCreateDeviceGray();&#10;    CGImageRef maskRef = CGImageCreateCopyWithColorSpace(mask.CGImage, graySpace);&#10;    CGColorSpaceRelease(graySpace);&#10;    //combine images&#10;    CGImageRef resultRef = CGImageCreateWithMask(image.CGImage, maskRef);&#10;    UIImage *result = [UIImage imageWithCGImage:resultRef];&#10;    CGImageRelease(resultRef);&#10;    CGImageRelease(maskRef);&#10;    //display result&#10;    self.imageView.image = result;</span><br></pre></td></tr></table></figure>
+<p><strong>JPEG 2000</strong></p>
+<p>但是JPEG 2000图片在（设备和模拟器）运行时会有效，而且比JPEG质量更好，同样也对透明通道有很好的支持。但是JPEG 2000图片在加载和显示图片方面明显要比PNG和JPEG慢得多，所以对图片大小比运行效率更敏感的时候，使用它是一个不错的选择。</p>
+<p>但仍然要对JPEG 2000保持关注，因为在后续iOS版本说不定就对它的性能做提升，但是在现阶段，混合图片对更小尺寸和质量的文件性能会更好。</p>
+<p><strong>PVRTC</strong></p>
+<p>…</p>
+<h3 id="u56DB_u3001_u56FE_u5C42_u6027_u80FD"><a href="#u56DB_u3001_u56FE_u5C42_u6027_u80FD" class="headerlink" title="四、图层性能"></a>四、图层性能</h3><h5 id="1__u9690_u5F0F_u7ED8_u5236"><a href="#1__u9690_u5F0F_u7ED8_u5236" class="headerlink" title="1 隐式绘制"></a>1 隐式绘制</h5><p>寄宿图可以通过Core Graphics直接绘制，也可以直接载入一个图片文件并赋值给<code>contents</code>属性，或事先绘制一个屏幕之外的<code>CGContext</code>上下文。在之前的两章中我们讨论了这些场景下的优化。但是除了常见的显式创建寄宿图，你也可以通过以下三种方式创建隐式的：1，使用特性的图层属性。2，特定的视图。3，特定的图层子类。</p>
+<p><strong>文本</strong></p>
+<p><code>CATextLayer</code>和<code>UILabel</code>都是直接将文本绘制在图层的寄宿图中。事实上这两种方式用了完全不同的渲染方式：在iOS 6及之前，<code>UILabel</code>用WebKit的HTML渲染引擎来绘制文本，而<code>CATextLayer</code>用的是Core Text.后者渲染更迅速，所以在所有需要绘制大量文本的情形下都优先使用它吧。但是这两种方法都用了软件的方式绘制，因此他们实际上要比硬件加速合成方式要慢。</p>
+<p>不论如何，尽可能地避免改变那些包含文本的视图的frame，因为这样做的话文本就需要重绘。例如，如果你想在图层的角落里显示一段静态的文本，但是这个图层经常改动，你就应该把文本放在一个子图层中。</p>
+<p><strong>光栅化</strong></p>
+<p> 在第四章『视觉效果』中我们提到了<code>CALayer</code>的<code>shouldRasterize</code>属性，它可以解决重叠透明图层的混合失灵问题。同样在第12章『速度的曲调』中，它也是作为绘制复杂图层树结构的优化方法。</p>
+<p>启用<code>shouldRasterize</code>属性会将图层绘制到一个屏幕之外的图像。然后这个图像将会被缓存起来并绘制到实际图层的<code>contents</code>和子图层。如果有很多的子图层或者有复杂的效果应用，这样做就会比重绘所有事务的所有帧划得来得多。但是光栅化原始图像需要时间，而且还会消耗额外的内存。</p>
+<p>当我们使用得当时，光栅化可以提供很大的性能优势（如你在第12章所见），但是一定要避免作用在内容不断变动的图层上，否则它缓存方面的好处就会消失，而且会让性能变的更糟。</p>
+<p>为了检测你是否正确地使用了光栅化方式，用Instrument查看一下Color Hits Green和Misses Red项目，是否已光栅化图像被频繁地刷新（这样就说明图层并不是光栅化的好选择，或则你无意间触发了不必要的改变导致了重绘行为）。</p>
+<h5 id="2__u79BB_u5C4F_u6E32_u67D3"><a href="#2__u79BB_u5C4F_u6E32_u67D3" class="headerlink" title="2 离屏渲染"></a>2 离屏渲染</h5><p>当图层属性的混合体被指定为在未预合成之前不能直接在屏幕中绘制时，屏幕外渲染就被唤起了。屏幕外渲染并不意味着软件绘制，但是它意味着图层必须在被显示之前在一个屏幕外上下文中被渲染（不论CPU还是GPU）。图层的以下属性将会触发屏幕外绘制：</p>
+<ul>
+<li>圆角（当和<code>maskToBounds</code>一起使用时）</li>
+<li>图层蒙板</li>
+<li>阴影</li>
+</ul>
+<p>屏幕外渲染和我们启用光栅化时相似，除了它并没有像光栅化图层那么消耗大，子图层并没有被影响到，而且结果也没有被缓存，所以不会有长期的内存占用。但是，如果太多图层在屏幕外渲染依然会影响到性能。</p>
+<p>有时候我们可以把那些需要屏幕外绘制的图层开启光栅化以作为一个优化方式，前提是这些图层并不会被频繁地重绘。</p>
+<p>对于那些需要动画而且要在屏幕外渲染的图层来说，你可以用<code>CAShapeLayer</code>，<code>contentsCenter</code>或者<code>shadowPath</code>来获得同样的表现而且较少地影响到性能。</p>
+<h5 id="3__u6DF7_u5408_u548C_u8FC7_u5EA6_u7ED8_u5236"><a href="#3__u6DF7_u5408_u548C_u8FC7_u5EA6_u7ED8_u5236" class="headerlink" title="3 混合和过度绘制"></a>3 混合和过度绘制</h5><p>GPU每一帧可以绘制的像素有一个最大限制（就是所谓的fill rate），这个情况下可以轻易地绘制整个屏幕的所有像素。但是如果由于重叠图层的关系需要不停地重绘同一区域的话，掉帧就可能发生了。</p>
+<p>GPU会放弃绘制那些完全被其他图层遮挡的像素，但是要计算出一个图层是否被遮挡也是相当复杂并且会消耗处理器资源。同样，合并不同图层的透明重叠像素（即混合）消耗的资源也是相当客观的。所以为了加速处理进程，不到必须时刻不要使用透明图层。任何情况下，你应该这样做：</p>
+<ul>
+<li>给视图的<code>backgroundColor</code>属性设置一个固定的，不透明的颜色</li>
+<li>设置<code>opaque</code>属性为YES</li>
+</ul>
+<p>这样做减少了混合行为（因为编译器知道在图层之后的东西都不会对最终的像素颜色产生影响）并且计算得到了加速，避免了过度绘制行为因为Core Animation可以舍弃所有被完全遮盖住的图层，而不用每个像素都去计算一遍。</p>
+<p>如果用到了图像，尽量避免透明除非非常必要。如果图像要显示在一个固定的背景颜色或是固定的背景图之前，你没必要相对前景移动，你只需要预填充背景图片就可以避免运行时混色了。</p>
+<p>如果是文本的话，一个白色背景的<code>UILabel</code>（或者其他颜色）会比透明背景要更高效。</p>
+<p>最后，明智地使用<code>shouldRasterize</code>属性，可以将一个固定的图层体系折叠成单张图片，这样就不需要每一帧重新合成了，也就不会有因为子图层之间的混合和过度绘制的性能问题了。</p>
+<h5 id="4__u51CF_u5C11_u56FE_u5C42_u6570_u91CF"><a href="#4__u51CF_u5C11_u56FE_u5C42_u6570_u91CF" class="headerlink" title="4 减少图层数量"></a>4 减少图层数量</h5><p>初始化图层，处理图层，打包通过IPC发给渲染引擎，转化成OpenGL几何图形，这些是一个图层的大致资源开销。事实上，一次性能够在屏幕上显示的最大图层数量也是有限的。</p>
+<p>确切的限制数量取决于iOS设备，图层类型，图层内容和属性等。但是总得说来可以容纳上百或上千个，下面我们将演示即使图层本身并没有做什么也会遇到的性能问题。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/11/iOS-Core-Animation——动画/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">iOS Core Animation——动画</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS-Core-Animation——性能优化" data-title="iOS Core Animation——性能优化" data-url="http://yoursite.com/2016/04/11/iOS-Core-Animation——性能优化/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 John
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
