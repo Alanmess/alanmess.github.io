@@ -18,7 +18,7 @@ Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕�
 #Core Animation—图层
 Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕上不同的可视内容，内容是被分解成独立的图层，存储在图层树的体系之中。于是这个树形成了UIKit以及iOS应用程序当中你所能在屏幕上看见的一切的基础。
 ###一、图层树">
-<meta property="og:updated_time" content="2016-04-11T03:56:01.000Z">
+<meta property="og:updated_time" content="2016-04-11T04:53:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
 <meta name="twitter:description" content="title: iOS Core Animation——图层date: 2016-04-11 11:54:04
@@ -210,7 +210,7 @@ Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕�
   
     <div class="article-meta">
       <a href="/2016/04/11/iOS-Core-Animation——图层/" class="article-date">
-  	<time datetime="2016-04-11T03:56:01.000Z" itemprop="datePublished">2016-04-11</time>
+  	<time datetime="2016-04-11T04:53:06.000Z" itemprop="datePublished">2016-04-11</time>
 </a>
     </div>
   
@@ -453,8 +453,6 @@ Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕�
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CATextLayer</span> *textLayer = [<span class="built_in">CATextLayer</span> layer];</span><br><span class="line">textLayer<span class="variable">.frame</span> = view<span class="variable">.bounds</span>;</span><br><span class="line">[view<span class="variable">.layer</span> addSublayer:textLayer];</span><br><span class="line"></span><br><span class="line"><span class="comment">//set text attributes</span></span><br><span class="line">textLayer<span class="variable">.foregroundColor</span> = [<span class="built_in">UIColor</span> blackColor]<span class="variable">.CGColor</span>;</span><br><span class="line">textLayer<span class="variable">.alignmentMode</span> = K<span class="built_in">CAAlignmentJustified</span>;</span><br><span class="line">textLayer<span class="variable">.wrapped</span> = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//choose a font</span></span><br><span class="line"><span class="built_in">UIFont</span> *font = [<span class="built_in">UIFont</span> systemFontOfSize:<span class="number">15</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//set layer font</span></span><br><span class="line"><span class="built_in">CFStringRef</span> fontName = (__bridge <span class="built_in">CFStringRef</span>)font<span class="variable">.fontName</span>;</span><br><span class="line"><span class="built_in">CGStringRef</span> fontRef = <span class="built_in">CGFontCreateWithFontName</span>(fontName);</span><br><span class="line">textLayer<span class="variable">.font</span> = fontRef;</span><br><span class="line">textLayer<span class="variable">.fontSize</span> = font<span class="variable">.pointSize</span>;</span><br><span class="line"><span class="built_in">CGFontRelease</span>(fontRef);</span><br><span class="line"></span><br><span class="line">textLayer<span class="variable">.string</span> = <span class="string">@"sgladgka"</span>;</span><br></pre></td></tr></table></figure>
 <p>CATextLayer的font属性不是一个UIFont类型，而是一个CFTypeRef类型。这样可以根据你的具体需要来决定字体属性应该是用CGFontRef类型还是CTFontRef类型(Core Text字体)。同时字体大小也是用fontSize属性单独设置的，因为CTFontRef和CGFontRef并不像UIFont一样包含点大小。</p>
 <p>另外，CATextLayer和string属性并不是你想象的NSString类型，而是id类型。这样你既可以用NSString也可以用NSAttributedString来指定文本了(NSAttributedString并不是NSString的子类)。属性化字符串是iOS用来渲染字体风格的机制，它以特定的方式来决定指定范围内的字符串的原始信息，比如字体、颜色、字重、斜体等。</p>
-<p><strong>富文本</strong></p>
-<p>iOS6中，Apple给UILabel和其他UIKit文本视图添加</p>
 
       
     </div>
@@ -463,6 +461,15 @@ Core Animation 演变自Layer Kit，是一个复合引擎，负责组合屏幕�
   
     
 <nav id="article-nav">
+  
+    <a href="/2016/04/11/iOS-Core-Animation——动画/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
   
   
     <a href="/2016/01/12/hello-world/" id="article-nav-older" class="article-nav-link-wrap">

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="title: iOS Core Animation——动画date: 2016-04-11 12:55:50
+#Core Animation — 动画
+###一、隐式动画
+#####1 事务
+
+Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过度到新值。
+事务通过CATransactio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2016/04/11/iOS-Core-Animation——动画/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="title: iOS Core Animation——动画date: 2016-04-11 12:55:50
+#Core Animation — 动画
+###一、隐式动画
+#####1 事务
+
+Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过度到新值。
+事务通过CATransactio">
+<meta property="og:updated_time" content="2016-04-11T04:57:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="title: iOS Core Animation——动画date: 2016-04-11 12:55:50
+#Core Animation — 动画
+###一、隐式动画
+#####1 事务
+
+Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过度到新值。
+事务通过CATransactio">
+  
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="null" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">John Doe</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>標籤</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>關於</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="/#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">John Doe</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="null" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">John Doe</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="/#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="/#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="/#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS-Core-Animation——动画" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/11/iOS-Core-Animation——动画/" class="article-date">
+  	<time datetime="2016-04-11T04:57:00.000Z" itemprop="datePublished">2016-04-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: iOS Core Animation——动画<br>date: 2016-04-11 12:55:50</p>
+<p>#Core Animation — 动画</p>
+<p>###一、隐式动画</p>
+<p>#####1 事务</p>
+<ul>
+<li>Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过度到新值。</li>
+<li>事务通过CATransaction类来做管理，这个类的设计有些奇怪，不像你从它的命名预期那样去管理一个简单的事务，而是管理了一叠你不能访问的事务。<code>CATransaction</code>没有属性或者实例方法，也不能用<code>alloc</code>和<code>init</code>方法创建它。但是可以用<code>begin</code>和<code>+commit</code>分别来入栈或者出栈。</li>
+</ul>
+<p>任何可以做动画的图层属性都会被添加到栈顶的事务，你可以通过<code>+setAnimationDuration</code>方法设置当前事务的动画时间，或者通过<code>+animationDuration</code>方法来获取值(默认0.25秒)。</p>
+<p>Core Animation在每个run loop周期中自动开始一次新的事务(run loop是iOS负责收集用户输入，处理定时器或者网络事件并且重新绘制屏幕的东西)，即使你不显示的用<code>[CATransaction begin]</code>开始一次事务，任何在一次run loop循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[CATransaction begin];&#10;[CATransaction setAnimationDuration:1.0];&#10;...&#10;[CATransaction commit];</span><br></pre></td></tr></table></figure>
+<p>UIView的动画方法<code>+beginAnimations:context:</code>、<code>+commitAnimations</code>和CATransaction的<code>+begin</code>、<code>+commit</code>方法类似。实际上<code>+beginAnimations:context:</code>、<code>+commitAnimations</code>之间所有视图或者图层属性的改变而做的动画都是由于设置了CATransaction的原因。</p>
+<p><code>+animationWithDuration:animations:</code>只是语法的简化，实质上也是同理。</p>
+<p>#####2 完成块</p>
+<p>CATransaction的<code>+setCompletionBlock</code>允许你在动画结束的时候提供一个完成的动作。</p>
+<p>#####3 图层行为</p>
+<p>Core Animation通常对CALayer的可动画属性做动画，但是UIView把它关联的图层的这个特性关闭了。</p>
+<p><em>隐式动画的实现：</em></p>
+<p>当CALayer的属性被修改时，它会调用<code>-actionForKey:</code>方法传递属性的名称，然后：</p>
+<ul>
+<li>图层首先检测它是否有委托，并且是否实现<code>CALayerDelegate</code>协议指定的<code>actionForLayer:forKey:</code>方法，如果有，直接调用并返回结果。</li>
+<li>如果没有委托，或者委托没有实现<code>-actionForLayer:forKey</code>方法，图层接着检查包含属性名称对应行为映射的actions字典。</li>
+<li>如果actions字典没有包含对应的属性，那么图层接着在它的style字典接着搜索属性名。</li>
+<li>最后，如果在style里面也找不到对应的行为，那么图层将会直接调用定义了每个属性的标准行为的<code>-defaultActionForKey:</code>方法。</li>
+</ul>
+<p>所以一轮完整的搜索结束之后，<code>-actionForKey:</code>要么返回空(这种情况下将不会有动画发生)，要么是CAAction协议对应的对象，最后CALayer拿这个结果去对先前和当前的值做动画。</p>
+<p>于是这就解释了UIKit是如何禁用隐式动画的：<em>每个UIView对它关联的图层都扮演了一个委托，并且提供了<code>-actionForKey:forKey</code>的实现方法。当不在一个动画块的实现中，UIView对所有图层行为返回nil，但是在动画block范围之内，它就返回了一个非空值。</em></p>
+<p>返回nil并不是禁用隐式动画唯一的办法，CATransaction的<code>+setDisableActions</code>可以用来对所有属性打开或者关闭隐式动画。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr_selector">[CATransaction begin]</span>;</span><br><span class="line"><span class="attr_selector">[CATransaction setDisableActions:YES]</span>;</span><br><span class="line">...</span><br><span class="line"><span class="attr_selector">[CATransaction commit]</span>;</span><br></pre></td></tr></table></figure>
+<p><em>总结</em></p>
+<ul>
+<li>UIView关联的图层禁用了隐式动画，对这种图层做动画的唯一办法就是使用UIView的动画函数(而不是依赖CATransaction)，或者继承UIView，并覆盖<code>-actionForKey:forKey</code>方法，或者直接创建一个显示动画。</li>
+<li>对于单独存在的图层，我们可以通过实现图层的<code>-actionForLayer:forKey:</code>委托方法，或者提供一个actions字典来控制隐式动画。</li>
+</ul>
+<p>行为通常是一个被Core Animation隐式调用的显示动画对象。这里我们使用的是一个实现了CATransaction的实例，叫做推进过渡。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CATranstion</span> *transition = [<span class="built_in">CATransition</span> animation];</span><br><span class="line">transition<span class="variable">.type</span> = k<span class="built_in">CATransitionPush</span>;</span><br><span class="line">transition<span class="variable">.subtype</span> = k<span class="built_in">CATransitionFromLeft</span>;</span><br><span class="line">layer<span class="variable">.actions</span> = @&#123;<span class="string">@"backgroundColor"</span>:transition&#125;;</span><br></pre></td></tr></table></figure>
+<p>#####1.4呈现与模型</p>
+<p>当设置CALayer的属性，实际上是在定义当前事务结束之后图层如何显示的模型。Core Animation扮演了一个控制器的角色，并且负责根据图层行为和事务设置去不断更新视图的这些属性在屏幕上的状态。</p>
+<p>我们讨论的就是一个典型的微型MVC模式。CALayer是一个连接用户界面虚构的类，但是在界面本身的这个场景下，CALayer的行为更像是存储了视图如何显示和动画的数据模型。实际上，在苹果自己的文档中，图层树通常都是值得图层树模型。</p>
+<p>每个图层属性的显示值都被存储在一个叫做<em>呈现图层</em>的独立图层当中，他可以通过<code>-presentationLayer</code>方法来访问。这个呈现图层实际上是模型图层的复制，但是它的属性值代表了在任何指定时刻当前外观效果。换句话说，你可以通过呈现图层的值来获取当前屏幕上真正显示出来的值。</p>
+<p><em>呈现树</em>：通过图层树种所有图层的呈现图层所形成。注意呈现图层仅仅当图层首次被提交(就是首次在屏幕上显示)的时候创建。</p>
+<p>大多数情况下，你不需要直接访问呈现图层，你可以通过和模型图层的交互，来让Core Animation更新显示，两种情况下呈现图层会变得很有用，一个是同步动画，一个是处理用户交互。</p>
+<ul>
+<li>如果你在实现一个基于定时器的动画，而不仅仅是基于事务的动画，这个时候准确地知道在某一时刻图层显示在什么位置就会对正确摆放图层很有用。</li>
+<li>如果你想让你做动画的图层响应用户输入，你可以使用<code>-hitTest</code>方法来判断指定图层是否被触摸，这时候对呈现图层而不是模型图层调用<code>-hitTest</code>会显得更有意义，因为呈现图层代表了用户当前看到的图层位置，而不是当前动画结束之后的位置。</li>
+</ul>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="typename">void</span>)<span class="string">touchsBegan:</span>(NSSet *)touches <span class="string">withEvent:</span>(UIEvent *)event &#123;</span><br><span class="line">  CGPoint point = [[touches anyObject] <span class="string">locationInView:</span>self.view];</span><br><span class="line">  <span class="keyword">if</span> ([layer.presentationLayer <span class="string">hitTest:</span>point]) &#123;</span><br><span class="line">  	...</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>###二、显式动画</p>
+<p>#####1 属性动画</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CABasicAnimation</span> *animation = [<span class="built_in">CABasicAnimation</span> animation];</span><br><span class="line">animation<span class="variable">.keyPath</span> = <span class="string">@"backgroundColor"</span>;</span><br><span class="line">animation<span class="variable">.toValue</span> = (__bridge <span class="keyword">id</span>)color<span class="variable">.CGColor</span>;</span><br><span class="line">animation<span class="variable">.delegate</span> = <span class="keyword">self</span>;</span><br><span class="line">[layer addAnimation:animation forKey:<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//代理方法</span></span><br><span class="line">- (<span class="keyword">void</span>)animationDidStop:(<span class="built_in">CABasicAnimation</span> *)anim finished:(<span class="built_in">BOOL</span>)flag &#123;</span><br><span class="line">  [<span class="built_in">CATransaction</span> begin];</span><br><span class="line">  [<span class="built_in">CATransaction</span> setDisableActions:<span class="literal">YES</span>];</span><br><span class="line">  _layer<span class="variable">.backgroundColor</span> = (__bridge <span class="built_in">CGColorRef</span>)anim<span class="variable">.toValue</span>;</span><br><span class="line">  [<span class="built_in">CATransaction</span> commit];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>动画本身会作为一个参数传入委托的方法，也许你会认为可以在控制器中把动画存储为一个属性，然后再调用比较，但实际上并不起作用，因为委托传入的动画参数是原始值的一个深拷贝，从而不是同一个值。</p>
+<p>当使用<code>-addAnimation:forKey:</code>把动画添加到图层，key参数是<code>-addAnimationForKey</code>方法对应动画的唯一标识符，而当前动画的所有键都可以用animationKeys获取。如果我们对每个动画都关联一个唯一的键，就可以对每个图层循环所有键，然后调用<code>-animationForKey:</code>来比对结果。尽管这不是一个优雅的实现。</p>
+<p>幸运的是，还有一种更加简单的方法。像所有的NSObject子类一样，CAAnimation实现了KVC协议，于是你可以用<code>-setValue:forKey:</code>和<code>-valueForKey</code>方法来存取属性。但CAAnimation有一个不同的性能：它更像一个NSDictionary，可以让你随意设置键值对，即使和你使用的动画类所声明的属性并不匹配。</p>
+<p>这意味着你可以对动画用任意类型打标签，在这里，我们给UIView类型的指针添加的动画，所以可以简单地判断动画到底属于哪个视图，然后在委托方法中用这个信息正确地更新。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#20351;&#29992;KVC&#23545;&#21160;&#30011;&#25171;&#26631;&#31614;&#10;[animation setValue:view forKey:@&#34;view&#34;];&#10;UIView *view = [anim valueForKey:@&#34;view&#34;];&#10;view.layer.transform = [anim.toValue CATransform3DValue];</span><br></pre></td></tr></table></figure>
+<p>#####关键帧动画</p>
+<p><code>CABasicAnimation</code>依然作用于单一的一个属性，但是它不限制于设置一个起始和结束的值，而是可以根据一连串随意的值来做动画。</p>
+<p>关键帧起源于传动动画，意思是指<em>主导的动画在显著改变发生时重绘当前帧</em>(也就是关键帧)，每帧之间剩下的绘制(可以通过关键帧推算出)将由熟练的艺术家来完成。<code>CAKeyframeAnimation</code>也是同样的道理：你提供了显著的帧，然后Core Animation在每帧之间进行插入。</p>
+<p><code>CAKeyframeAnimation</code>有另一种方式去指定动画，就是使用<code>CGPath</code>。path属性可以用一种直观的方式，使用Core Graphics函数定义运动序列来绘制动画。</p>
+<p>#####虚拟属性</p>
+<p>之前提到过属性动画实际上是针对于关键路径而不是一个键，这就意味着可以对子属性甚至是虚拟属性做动画。</p>
+<p>#####2 动画组</p>
+<p><code>CAAnimationGroup</code>可以把动画组合在一起。它是另一个继承于<code>CAAnimation</code>的子类，它添加了一个<code>animations</code>数组的属性，用来组合别的动画。</p>
+<p>#####3 过渡</p>
+<p>改变图层不能动画的属性，或者从层级关系中添加或移除图层，属性动画将不起作用，于是有了过渡的概念。</p>
+<p>过渡不像属性动画那样平滑的在两个值之间做动画，而是影响到整个图层的变化。过渡动画首先展示之前的图层外观，然后通过一个交换过渡到新的外观。</p>
+<p>为了创建一个过渡动画，我们将使用<code>CATransition</code>，同样是另一个<code>CAAnimation</code>的子类，和别的子类不同，<code>CATransition</code>有一个<code>type</code>和<code>subtype</code>来标识变换效果。</p>
+<p><code>type</code>属性是一个NSString类型，可以被设置成如下类型：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CATransitionFade</span></span><br><span class="line">k<span class="built_in">CATransitionMoveIn</span></span><br><span class="line">k<span class="built_in">CATransitionPush</span></span><br><span class="line">k<span class="built_in">CATransitionReveal</span></span><br></pre></td></tr></table></figure>
+<p><code>subtype</code>定义了方向：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CATransitionFromRight</span> </span><br><span class="line">k<span class="built_in">CATransitionFromLeft</span> </span><br><span class="line">k<span class="built_in">CATransitionFromTop</span> </span><br><span class="line">k<span class="built_in">CATransitionFromBottom</span></span><br></pre></td></tr></table></figure>
+<p>过渡动画和属性动画添加到图层上的方式一致，都是通过<code>-addAnimation:forKey:</code>方法。但是过渡动画对指定的图层只能使用一次<code>CATransition</code>，因此，无论你对动画的键设置什么值，过渡动画都会对它的键设置成”transition”，也就是常量<code>kCATransition</code>。</p>
+<p><strong>隐式过渡</strong></p>
+<p>对图层<code>contents</code>图片做的改动都会自动附上淡入淡出的动画。</p>
+<p><strong>对图层树的动画</strong></p>
+<p>要确保<code>CATransition</code>添加到的图层在过渡动画发生时不会再树状结构中被移除，否则<code>CATransition</code>将会和图层一起被移除。一般来说，你只需要将动画添加到被影响图层的<code>superlayer</code>。</p>
+<p><strong>自定义动画</strong></p>
+<p>过渡动画就是对原始的图层外观截图，然后添加一段动画，平滑过渡到图层改变之后那个截图的效果。</p>
+<p><code>CALayer</code>有一个<code>-renderInContext:</code>方法，可以通过把它绘制到Core Graphics的上下文中捕获当前内容的图片，然后在另外的视图中显示出来。如果我们把这个截屏视图置于原始视图之上，就可以遮住真实视图的所有变换，于是重新创建了一个简单的过渡效果。</p>
+<p><strong>在动画过程中取消动画</strong></p>
+<p><code>- (CAAnimation *)animationForKey:(NSString *)key</code>方法可以通过<code>key</code>参数在添加动画之后检索一个动画；</p>
+<p>为了终止一个指定的动画，你可以用如下方法把它从图层中移除掉：</p>
+<p><code>- (void)removeAnimationForKey:(NSString *)key</code></p>
+<p><code>- (void)removeAllAnimations</code></p>
+<p>动画一旦被移除，图层的外观就立刻更新到当前的模型图层的值。一般来说，动画在结束之后被自动移除，除非设置<code>removeOnCompletion</code>为<code>NO</code>，此时需要手动移除，否则会一直存在于内存中，直到图层被销毁。</p>
+<p><code>-animationDidStop:finished:</code>方法中的<code>flag</code>参数表明了动画是自然结束还是被打断；</p>
+<p>###三、图层时间</p>
+<p>#####1 <code>CAMediaTiming</code>协议</p>
+<p><code>CAMediaTiming</code>协议定义了在一段动画内用来控制逝去时间的属性的集合，<code>CALayer</code>和<code>CAAnimation</code>都实现了这个协议，所以时间可以被任意基于一个图层或者一段动画的类控制。</p>
+<p><strong>持续和重复</strong></p>
+<p>“显示动画”中的<code>duration</code>(<code>CAMediaTiming</code>的属性之一)，<code>duration</code>是一个<code>CFTimeInterval</code>的类型(类似于<code>NSTI&#39;mInterval</code>的一种双精度浮点类型)，对将要进行的动画的一次迭代指定了时间。</p>
+<p>一次迭代：<code>CAMediaTiming</code>另外还有个属性叫做<code>repeatCount</code>，代表动画重复的迭代次数。</p>
+<p>创建重复动画的另一种方式是使用<code>repeatDuration</code>属性，它让动画重复一个指定的时间，而不是指定的次数。你甚至设置<code>autoreverses</code>属性在每次间隔交替循环过程中自动回放。</p>
+<p><strong>相对时间</strong></p>
+<p>Core Animation的时间都是相对的，每个动画都有它自己描述的时间，可以独立的加速，延时，偏移。</p>
+<p><code>beginTime</code>指定了动画开始之前的延迟时间。这里的延迟从动画添加到可见图层的那一刻开始测量。</p>
+<p><code>speed</code>是一个时间的倍数，默认1.0，减少它会减慢图层/动画的时间，增加它会加快速度。</p>
+<p><code>timeOffset</code>，让动画快进到某一点。</p>
+<p><strong>fillMode</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CAFillModeForwards</span> </span><br><span class="line">k<span class="built_in">CAFillModeBackwards</span> </span><br><span class="line">k<span class="built_in">CAFillModeBoth</span> </span><br><span class="line">k<span class="built_in">CAFillModeRemoved</span></span><br></pre></td></tr></table></figure>
+<p>#####3 手动动画</p>
+<p><code>timeOffset</code>一个很有用的功能可以让你手动控制动画进程，通过设置<code>speed</code>为0，可以禁用动画的自动播放，然后用<code>timeOffset</code>显示动画序列。</p>
+<p>###四、缓冲</p>
+<p>#####1 动画速度</p>
+<p>动画实际上就是一段时间内的变化，这就暗示了变化一定是随着某个特定的速率进行。速率由以下公式计算而来：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">velocity = change / time</span><br></pre></td></tr></table></figure>
+<p>这里的变化可以指的是一个物体移动的距离，时间指动画持续的时长，用这样的一个移动可以更加形象的描述(如<code>position</code>和<code>bounds</code>属性的动画)，但实际上它应用于任意可以做动画的属性(如<code>color</code>、<code>opacity</code>)。</p>
+<p><strong>CAMediaTimingFunction</strong></p>
+<p>缓冲方程式：首先需要设置<code>CAAnimation</code>的<code>timingFunction</code>属性，是<code>CAMediaTimingFunction</code>类的一个对象。</p>
+<p>这里有一些方式来创建<code>CAMediaTimingFunction</code>，最简单的方式是调用<code>+timingFunctionWithName:</code>的构造方法。这里传入如下几个常量之一：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">k<span class="built_in">CAMediaTimingFunctionLinear</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseIn</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseOut</span> </span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionEaseInEaseOut</span></span><br><span class="line">k<span class="built_in">CAMediaTimingFunctionDefault</span></span><br></pre></td></tr></table></figure>
+<p><strong>UIView的动画缓冲</strong></p>
+<p>UIKit的动画同样支持这些缓冲方法的使用，尽管语法和常量有些不同，为了改变UIView动画的缓冲选项，给options参数添加如下常量之一：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseInOut</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseIn</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveEaseOut</span> </span><br><span class="line"><span class="built_in">UIViewAnimationOptionCurveLinear</span></span><br></pre></td></tr></table></figure>
+<p><strong>缓冲和关键帧动画</strong></p>
+<p><code>CAKeyframeAnimation</code>有一个NSArray类型的<code>timingFunctions</code>属性，我们可以用它来对每次动画的步骤指定不同的计时函数。</p>
+<p>#####2 自定义缓冲函数</p>
+<p>除了<code>+functionWithName:</code>之外，<code>CAMediaTimingFunction</code>同样有另一个构造函数，一个有四个浮点参数的<code>+functionWithControlPoints::::</code>，使用这个方法，我们可以创建一个自定义的缓冲函数。</p>
+<p><strong>三次贝塞尔曲线</strong></p>
+<p><code>CAMediaTimingFunction</code>有一个叫做<code>-getControlPointAtIndex:values:</code>的方法，可以用来检索曲线的点。</p>
+<p><strong>更加复杂的动画曲线</strong></p>
+<ul>
+<li>用<code>CAKeyframeAnimation</code>创建一个动画，然后分割成几个步骤，每个小步骤使用自己的计时函数</li>
+<li>使用定时器逐帧更新实现动画</li>
+</ul>
+<p><strong>基于关键帧的缓冲</strong></p>
+<p>为了使用关键帧实现反弹动画，我们需要在缓冲曲线中对每一个显著的点创建一个关键帧(在这个情况下，关键点也就是每次反弹的峰值)，然后用缓冲函数把每段曲线链接起来。同时我们也需要通过<code>keyTimes</code>来指定每个关键帧的时间偏移。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> animation<span class="variable">.values</span> = @[</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">140</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">220</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">250</span>)],</span><br><span class="line">                         [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)]</span><br><span class="line">                         ];</span><br><span class="line"></span><br><span class="line">animation<span class="variable">.timingFunctions</span> = @[</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseOut</span>],</span><br><span class="line">                                  [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseIn</span>]</span><br><span class="line">                                  ];</span><br><span class="line">animation<span class="variable">.keyTimes</span> = @[@<span class="number">0.0</span>, @<span class="number">0.3</span>, @<span class="number">0.5</span>, @<span class="number">0.7</span>, @<span class="number">0.8</span>, @<span class="number">0.9</span>, @<span class="number">0.95</span>, @<span class="number">1.0</span>];</span><br></pre></td></tr></table></figure>
+<p><strong>流程自动化</strong></p>
+<ul>
+<li>自动把任意属性动画分割成多个关键帧</li>
+<li>用一个数学函数表示弹性动画，使得可以对帧</li>
+</ul>
+<p>###五、基于定时器的动画</p>
+<p>#####1 定时帧</p>
+<p>iOS每秒60次刷新屏幕，然后<code>CAAnimation</code>计算出需要展示的新的帧，然后在每次屏幕更新的时候同步绘制上去，<code>CAAnimation</code>最机智的地方在于每次刷新需要展示的时候去计算插值和缓冲。</p>
+<p><strong>NSTimer</strong></p>
+<p>iOS上的每个线程都管理了一个<code>NSRunloop</code>，就是通过一个循环来完成一些任务列表。但是对主线程，这些任务包含如下几项：</p>
+<ul>
+<li>处理触摸事件</li>
+<li>发送和接受网络数据包</li>
+<li>执行使用gcd的代码</li>
+<li>处理计时器行为</li>
+<li>屏幕重绘</li>
+</ul>
+<p>当你设置一个NSTimer，他会被插入到当前任务列表中，然后直到指定时间过去之后才会被执行。但是何时启动定时器并没有一个时间上限，而且它只会在列表中上一个任务完成之后才开始执行。这通常会导致有几毫秒的延迟，但是如果上一个任务过去了很久才完成就会导致延迟很长一段时间。</p>
+<p>所以不能保证定时器精准地一秒钟执行六十次，有时候发生在屏幕重绘之后，这就会使得更新屏幕会有个延迟，看起来就是动画卡壳了。有时候定时器会在屏幕更新的时候执行两次，于是动画看起来就跳动了。</p>
+<p>优化途径：</p>
+<ul>
+<li>用<code>CADisplayLink</code>让更新频率严格控制在每次屏幕刷新之后</li>
+<li>基于真实帧的持续时间而不是假设的更新频率来做动画</li>
+<li>调整动画计时器的run loop模式，这样就不会被别的事件干扰</li>
+</ul>
+<p><strong>CADisplayLink</strong></p>
+<p>它总是在屏幕完成一次更新之前启动，和<code>NSTimer</code>的<code>timeInterval</code>以秒为单位不同，<code>CADisplayLink</code>有一个整型的<code>frameInterval</code>属性，指定了间隔多少帧之后才执行。默认值是1，意味着每次屏幕更新之前都会执行一次。但是如果动画的代码执行起来超过六十分之一秒，你可以指定<code>frameInterval</code>为2，就是说动画每隔一帧执行一次(一秒钟30帧)。</p>
+<p>用<code>CADisplayLink</code>而不是<code>NSTimer</code>，会保证帧率足够连续，使得动画看起来更加平滑，但即使<code>CADisplayLink</code>也不能保证每一帧都按计划执行，一些失去控制的离散的任务或事件(如资源紧张的后台程序)可能会导致动画偶尔地丢帧。当使用NSTimer的时候，一旦有机会计时器就会开启，但是<code>CADisplayLink</code>却不一样：如果它丢失了帧，就会直接忽略它们，然后在下一次更新的时候接着运行。</p>
+<p><strong>计算帧的持续时间</strong></p>
+<p>由于我们不能计算出一帧真实的持续时间，所以需要手动测量。我们可以在每帧开始刷新的时候用<code>CACurrentMediaTime()</code>记录当前时间，然后和上一帧记录的时间去比较。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)animate</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//reset ball to top of screen</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.ballView</span><span class="variable">.center</span> = <span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>);</span><br><span class="line">    <span class="comment">//configure the animation</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.duration</span> = <span class="number">1.0</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timeOffset</span> = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.fromValue</span> = [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>)];</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.toValue</span> = [<span class="built_in">NSValue</span> valueWith<span class="built_in">CGPoint</span>:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)];</span><br><span class="line">    <span class="comment">//stop the timer if it's already running</span></span><br><span class="line">    [<span class="keyword">self</span><span class="variable">.timer</span> invalidate];</span><br><span class="line">    <span class="comment">//start the timer</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.lastStep</span> = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timer</span> = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span></span><br><span class="line">                                selector:<span class="keyword">@selector</span>(step:)];</span><br><span class="line">    [<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop]</span><br><span class="line">                     forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)step:(<span class="built_in">CADisplayLink</span> *)timer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//calculate time delta</span></span><br><span class="line">    <span class="built_in">CFTimeInterval</span> thisStep = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="built_in">CFTimeInterval</span> stepDuration = thisStep - <span class="keyword">self</span><span class="variable">.lastStep</span>;</span><br><span class="line">    <span class="keyword">self</span><span class="variable">.lastStep</span> = thisStep;</span><br><span class="line">    <span class="comment">//update time offset</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.timeOffset</span> = MIN(<span class="keyword">self</span><span class="variable">.timeOffset</span> + stepDuration, <span class="keyword">self</span><span class="variable">.duration</span>);</span><br><span class="line">    <span class="comment">//get normalized time offset (in range 0 - 1)</span></span><br><span class="line">    <span class="keyword">float</span> time = <span class="keyword">self</span><span class="variable">.timeOffset</span> / <span class="keyword">self</span><span class="variable">.duration</span>;</span><br><span class="line">    <span class="comment">//apply easing</span></span><br><span class="line">    time = bounceEaseOut(time);</span><br><span class="line">    <span class="comment">//interpolate position</span></span><br><span class="line">    <span class="keyword">id</span> position = [<span class="keyword">self</span> interpolateFromValue:<span class="keyword">self</span><span class="variable">.fromValue</span> toValue:<span class="keyword">self</span><span class="variable">.toValue</span></span><br><span class="line">                                        time:time];</span><br><span class="line">    <span class="comment">//move ball view to new position</span></span><br><span class="line">    <span class="keyword">self</span><span class="variable">.ballView</span><span class="variable">.center</span> = [position <span class="built_in">CGPointValue</span>];</span><br><span class="line">    <span class="comment">//stop the timer if we've reached the end of the animation</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.timeOffset</span> &gt;= <span class="keyword">self</span><span class="variable">.duration</span>) &#123;</span><br><span class="line">        [<span class="keyword">self</span><span class="variable">.timer</span> invalidate];</span><br><span class="line">        <span class="keyword">self</span><span class="variable">.timer</span> = <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>RunLoop模式</strong></p>
+<p>当创建<code>CADisplayLink</code>的时候，我们需要指定一个<code>run loop</code>和<code>run loop mode</code></p>
+<ul>
+<li>NSDefaultRunLoopMode        标准优先级</li>
+<li>NSRunLoopCommonModes  高优先级</li>
+<li>UITrackingRunLoopMode       用于<code>UIScrollView</code>和别的控件的动画</li>
+</ul>
+<p>例子中，我们用了<code>NSDefaultRunLoopMode</code>，但是不能保证动画平滑的运行，所以就可以用<code>NSRunLoopCommonModes</code>来代替。但是如果动画在一个高帧率的情况下运行，你会发现一些别的类似于定时器的任务或类似于滑动的其他iOS动画会暂停，直到动画结束。</p>
+<p>可以同时对<code>CADisplayLink</code>指定多个run loop模式，于是我们可以同时加入<code>NSDefaultRunLoopMode</code>和<code>UITrackingRunLoopMode</code>来保证它不会被滑动打断，也不会被其他UIKit控件动画影响性能：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">_timer = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(step:)];</span><br><span class="line">[<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">[<span class="keyword">self</span><span class="variable">.timer</span> addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">UITrackingRunLoopMode</span>];]</span><br></pre></td></tr></table></figure>
+<p>#####2 物理模拟</p>
+<p><strong>Chipmunk</strong></p>
+<p>Chipmunk物理引擎常用类：</p>
+<ul>
+<li>cpSpace - 这是所有的物理结构体的容器。它有一个大小和一个可选的重力矢量</li>
+<li>cpBody - 它是一个固态无弹力的刚体。它有一个坐标，以及其他物理属性，例如质量、运动和摩擦系数等</li>
+<li>cpShape - 它是一个抽象的几何形状，用来检测碰撞。可以给结构体添加一个多边形，而且cpShape有各种子类来代表不同形状的类型</li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/11/iOS-Core-Animation——图层/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS-Core-Animation——动画" data-title="" data-url="http://yoursite.com/2016/04/11/iOS-Core-Animation——动画/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 John Doe
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
