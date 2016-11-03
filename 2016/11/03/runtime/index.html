@@ -9,10 +9,10 @@
   <meta name="description" content="本文档将具体介绍NSObject类以及Objective-C程序是如何和运行时系统交互的。本文还给出怎样在运行时动态地加载新类和将消息转发给其它对象的范例，同时也给出了怎样在程序运行时获取对象信息的方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OC 运行时">
-<meta property="og:url" content="http://yoursite.com/2016/10/31/runtime/index.html">
+<meta property="og:url" content="http://yoursite.com/2016/11/03/runtime/index.html">
 <meta property="og:site_name" content="小小码农">
 <meta property="og:description" content="本文档将具体介绍NSObject类以及Objective-C程序是如何和运行时系统交互的。本文还给出怎样在运行时动态地加载新类和将消息转发给其它对象的范例，同时也给出了怎样在程序运行时获取对象信息的方法。">
-<meta property="og:updated_time" content="2016-10-31T07:05:42.000Z">
+<meta property="og:updated_time" content="2016-11-03T03:15:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OC 运行时">
 <meta name="twitter:description" content="本文档将具体介绍NSObject类以及Objective-C程序是如何和运行时系统交互的。本文还给出怎样在运行时动态地加载新类和将消息转发给其它对象的范例，同时也给出了怎样在程序运行时获取对象信息的方法。">
@@ -162,8 +162,8 @@
       <div class="body-wrap"><article id="post-runtime" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/10/31/runtime/" class="article-date">
-  	<time datetime="2016-10-31T07:05:42.000Z" itemprop="datePublished">2016-10-31</time>
+      <a href="/2016/11/03/runtime/" class="article-date">
+  	<time datetime="2016-11-03T03:15:48.000Z" itemprop="datePublished">2016-11-03</time>
 </a>
     </div>
   
@@ -205,7 +205,7 @@
 <p><strong>类的结构(编译器生成)</strong></p>
 <ul>
 <li>指向父类的指针</li>
-<li>类的方法表。方法表将方法选标和该类的方法实现的地址关联起来</li>
+<li>类的方法表。方法表(Method)将方法选标(SEL)和该类的方法实现的地址(IMP)关联起来</li>
 </ul>
 <p><strong>对象的结构(编译器生成)</strong></p>
 <ul>
@@ -216,6 +216,7 @@
 <h3 id="u52A8_u6001_u65B9_u6CD5_u89E3_u6790"><a href="#u52A8_u6001_u65B9_u6CD5_u89E3_u6790" class="headerlink" title="动态方法解析"></a>动态方法解析</h3><p>对象或类接收到未实现的方法，可以运行时动态的为一个方法提供实现：<br><code>+ (BOOL)resolveClassMethod:(SEL)name</code><br><code>+ (BOOL)resolveInstanceMethod:(SEL)name</code><br>name需要动态实现的方法，BOOL返回值解析成功与否，失败则实现消息转发</p>
 <p>在上述方法中通过调用<code>class_addMethod(Class cls, SEL name, IMP imp, const char *types)</code>为方法提供实现<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//oc方法至少带有两个参数(slef和cmd)</span></span><br><span class="line"><span class="keyword">void</span> dynamicMethodIMP(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//implemetation</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Foo</span></span></span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)name</span><br><span class="line">&#123;</span><br><span class="line">    class_addMethod([<span class="keyword">self</span> class], name, (IMP)dynamicMethodIMP, <span class="string">"v@:"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p>
 <h3 id="u6D88_u606F_u8F6C_u53D1"><a href="#u6D88_u606F_u8F6C_u53D1" class="headerlink" title="消息转发"></a>消息转发</h3><p>当对象接收到未定义的方法,运行时系统会发送<code>forwardInvocation:(NSInvocation*)invocation</code>消息<br>NSInvocation对象封装了原始的消息和消息参数<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="typename">void</span>)<span class="string">forwardInvocation:</span>(NSInvocation *)invocation &#123;</span><br><span class="line">    <span class="keyword">if</span>([someObj <span class="string">respondsToSelector:</span>[invocation selector]])</span><br><span class="line">        [invocation <span class="string">invokeWithTarget:</span>someObj];</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        [<span class="keyword">super</span> <span class="string">forwardInvocation:</span>invocation];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>消息转发会先调用<code>methodSignatureForSlector</code>函数返回NSMethodSignature，<br>如果NSMethodSignature对象有效，执行对象中的<code>forwardInvocation</code>函数，无效则调用<code>doenNotRecognizeSelector</code>并抛出异常</p>
 
       
     </div>
@@ -262,7 +263,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="runtime" data-title="OC 运行时" data-url="http://yoursite.com/2016/10/31/runtime/"></div>
+	<div class="ds-thread" data-thread-key="runtime" data-title="OC 运行时" data-url="http://yoursite.com/2016/11/03/runtime/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
